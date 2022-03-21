@@ -13,6 +13,8 @@ addRecorded(String uid) {
 }
 
 deleteFilesOverKeepLimit() {
+  if (keepRecordings == 0) return;
+  
   Iterable<File> files = recordingsDir.listSync().whereType<File>();
   if (files.length > keepRecordings) {
     files = files.toList().sublist(keepRecordings, files.length - 1);
@@ -24,6 +26,8 @@ deleteFilesOverKeepLimit() {
 }
 
 Future<Process> startRecordWithName(String filename) async {
+  deleteFilesOverKeepLimit();
+
   filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
 
   var process = await Process.start(
