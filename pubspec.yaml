@@ -1,5 +1,5 @@
 name: record_on_calendar
-description: Starts sound recording based on an ical link.
+description: A simple program to record audio automatically according to iCal calendar events.
 # Also change in utils/globals.dart
 version: 0.0.4
 
