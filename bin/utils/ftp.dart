@@ -12,6 +12,14 @@ uploadFile(File file) async {
 
   print("Uploading file...");
 
+  try {
+    print("  Connecting to $ftpHost");
+    await ftpConnect.connect();
+  } catch (e) {
+    print("    Couldn't connect!\n$e");
+    return;
+  }
+
   if (keepRecordings != 0) {
     print("  Deleting old file(s) from server");
     List<FTPEntry> items = await ftpConnect.listDirectoryContent();
@@ -26,17 +34,21 @@ uploadFile(File file) async {
       items = items.sublist(keepRecordings, items.length - 1);
 
       for (var item in items) {
+        print("    Deleting ${item.name}");
         ftpConnect.deleteFile(item.name);
       }
     }
   }
 
   try {
-    await ftpConnect.connect();
-    ftpConnect
-        .uploadFileWithRetry(file, pRetryCount: 3)
-        .then((_) => ftpConnect.disconnect());
+    print("  Starting upload in background");
+    ftpConnect.uploadFileWithRetry(file, pRetryCount: 3).then(
+      (_) {
+        print("  Successfully uploaded ${file.path}. Disconnecting.");
+        ftpConnect.disconnect();
+      },
+    );
   } catch (e) {
-    throw ("Error while uploading file!\n$e");
+    print("    Error while uploading file!\n$e");
   }
 }
