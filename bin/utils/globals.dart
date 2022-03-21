@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'ical.dart';
 
-final String version = "0.0.1";
+final String version = "0.0.4";
 final String ps = Platform.pathSeparator;
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File('${homeDir.path}${ps}config.txt');
@@ -18,6 +18,10 @@ int endLaterByMinutes = 30;
 int keepRecordings = 0; //TODO implement
 RegExp matchEventName = RegExp(r".");
 Uri iCalUri = Uri();
+String? ftpUsername;
+String? ftpPassword;
+String? ftpHost;
+int iCalUpdateFrequencyMinutes = 30;
 
 List<Event> events = [];
 

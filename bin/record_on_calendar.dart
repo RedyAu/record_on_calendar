@@ -4,7 +4,7 @@ import 'dart:io';
 import 'utils/globals.dart';
 import 'utils/configFile.dart';
 import 'utils/ical.dart';
-import 'utils/sox.dart';
+import 'utils/recording.dart';
 
 program() async {
   //! Startup
@@ -16,18 +16,19 @@ program() async {
     print(
         'Created directory with configuration file. Please edit and run again.');
     configFile.writeAsStringSync(getConfigFileText());
+    
     exitWithPrompt(0);
   }
   print('Loading config file');
   loadConfig();
 
   if (!soxExe.existsSync()) {
-    await getSox();
+    await getRuntime();
   }
 
   await updateICal();
 
-  //!Read already recorded events.
+  //! Read already recorded events.
   if (recordedListFile.existsSync()) {
     recorded = recordedListFile.readAsLinesSync();
   } else {
@@ -38,7 +39,7 @@ program() async {
   //! Timers
 
   //! iCal update
-  var icalTimer = Timer.periodic(Duration(hours: 1), (_) async {
+  var icalTimer = Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
     updateICal();
   });
 

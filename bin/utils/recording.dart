@@ -12,14 +12,27 @@ addRecorded(String uid) {
   recordedListFile.writeAsStringSync(recorded.join("\n"));
 }
 
+deleteFilesOverKeepLimit() {
+  Iterable<File> files = recordingsDir.listSync().whereType<File>();
+  if (files.length > keepRecordings) {
+    files = files.toList().sublist(keepRecordings, files.length - 1);
+    for (var file in files) {
+      print("  Deleted file over keep limit: ${file.path}");
+      file.delete();
+    }
+  }
+}
+
 Future<Process> startRecordWithName(String filename) async {
+  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
+
   var process = await Process.start(
       soxExe.path,
       [
         "-t",
         "waveaudio",
         "-d",
-        "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_")
+        filename,
       ],
       //runInShell: true,
       workingDirectory: recordingsDir.path);
@@ -29,7 +42,7 @@ Future<Process> startRecordWithName(String filename) async {
   return process;
 }
 
-Future getSox() async {
+Future getRuntime() async {
   if (soxDir.existsSync()) soxDir.deleteSync(recursive: true);
 
   print(

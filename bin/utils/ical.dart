@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 
+import 'ftp.dart';
 import 'globals.dart';
-import 'sox.dart';
+import 'recording.dart';
 
 Future<Event?> getNext() async {
   try {
@@ -33,11 +34,12 @@ Future updateICal() async {
   print("  Parsing");
   ICalendar iCalendar = ICalendar.fromString(iCalString);
   for (Map vEvent in iCalendar.data.where((data) => data["type"] == "VEVENT")) {
-    events.add(Event(
+    var event = Event(
         vEvent["uid"],
         DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt),
         DateTime.parse((vEvent["dtend"] as IcsDateTime).dt),
-        vEvent["summary"]));
+        vEvent["summary"]);
+    if (matchEventName.hasMatch(event.title)) events.add(event);
   }
   events.sort((a, b) => b.start.compareTo(a.start));
   print("  Done. Got ${events.length} items.");
@@ -52,18 +54,23 @@ class Event {
   Event(this.uid, this.start, this.end, this.title);
 
   Process? recorderProcess;
+  File? audioFile;
 
-  ///Returns Process ID of recording SoX process.
+  ///Returns Process from recording SoX process.
   startRecord() async {
     addRecorded(uid);
-    recorderProcess =
-        await startRecordWithName('${start.toIso8601String()} - $title');
+    String name = '${start.toIso8601String()} - $title';
+    recorderProcess = await startRecordWithName(name);
+    audioFile = File(recordingsDir.path +
+        ps +
+        "$name.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_"));
     print("  Started process with PID ${recorderProcess!.pid}");
   }
 
   stopRecord() {
     recorderProcess!.kill(ProcessSignal.sigterm);
     print("  Stopped process with PID ${recorderProcess!.pid}");
+    uploadFile(audioFile!);
   }
 
   @override
