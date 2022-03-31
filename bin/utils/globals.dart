@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'ical.dart';
 
-final String version = "0.0.4";
+final String version = "1.0.0";
 final String ps = Platform.pathSeparator;
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File('${homeDir.path}${ps}config.txt');
