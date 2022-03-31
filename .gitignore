@@ -4,3 +4,5 @@
 
 # Conventional directory for build output.
 build/
+RecordOnCalendar/
+RecordOnCalendar/config.txt
