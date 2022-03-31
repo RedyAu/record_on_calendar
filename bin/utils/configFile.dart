@@ -48,9 +48,10 @@ Don't change this line!
 String? getConfigValue(String name, String configString) {
   List<String> lines = configString.split("\n");
   try {
-    return lines
+    String val = lines
         .firstWhere((element) => element.startsWith(name))
         .substring(name.length + 2);
+    return (val.length == 0) ? null : val;
   } catch (e) {
     return null;
   }

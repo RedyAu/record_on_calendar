@@ -36,8 +36,8 @@ Future updateICal() async {
   for (Map vEvent in iCalendar.data.where((data) => data["type"] == "VEVENT")) {
     var event = Event(
         vEvent["uid"],
-        DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt),
-        DateTime.parse((vEvent["dtend"] as IcsDateTime).dt),
+        DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt).toLocal(),
+        DateTime.parse((vEvent["dtend"] as IcsDateTime).dt).toLocal(),
         vEvent["summary"]);
     if (matchEventName.hasMatch(event.title)) events.add(event);
   }
@@ -68,9 +68,24 @@ class Event {
   }
 
   stopRecord() {
-    recorderProcess!.kill(ProcessSignal.sigterm);
-    print("  Stopped process with PID ${recorderProcess!.pid}");
-    uploadFile(audioFile!);
+    if (recorderProcess == null) {
+      print("  Couldn't stop recording, no process associated with event!");
+    } else {
+      recorderProcess!.kill(ProcessSignal.sigterm);
+      print("  Stopped process with PID ${recorderProcess!.pid}");
+      uploadFile(audioFile!);
+    }
+  }
+
+  @override
+  int get hashCode => uid.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    bool result = other is Event && other.uid == uid;
+    return result;
   }
 
   @override

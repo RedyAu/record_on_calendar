@@ -23,6 +23,8 @@ String? ftpPassword;
 String? ftpHost;
 int iCalUpdateFrequencyMinutes = 30;
 
+bool iCalUpdating = false;
+
 List<Event> events = [];
 
 exitWithPrompt(int code) {

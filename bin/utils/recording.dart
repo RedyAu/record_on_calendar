@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:archive/archive_io.dart';
 
+import 'ftp.dart';
 import 'globals.dart';
 
 List<String> recorded = [];
@@ -14,12 +15,16 @@ addRecorded(String uid) {
 
 deleteFilesOverKeepLimit() {
   if (keepRecordings == 0) return;
-  
-  Iterable<File> files = recordingsDir.listSync().whereType<File>();
+
+  print("  Deleting files over keep limit...");
+
+  List<File> files = recordingsDir.listSync().whereType<File>().toList();
+  files.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
   if (files.length > keepRecordings) {
-    files = files.toList().sublist(keepRecordings, files.length - 1);
+    files = files.toList().sublist(keepRecordings);
     for (var file in files) {
-      print("  Deleted file over keep limit: ${file.path}");
+      print("    Deleting file from drive and FTP: ${file.path}");
+      tryDeleteFileFromServer(file);
       file.delete();
     }
   }

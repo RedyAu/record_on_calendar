@@ -6,7 +6,7 @@ import 'utils/configFile.dart';
 import 'utils/ical.dart';
 import 'utils/recording.dart';
 
-program() async {
+void main() async {
   //! Startup
 
   print(
@@ -16,7 +16,7 @@ program() async {
     print(
         'Created directory with configuration file. Please edit and run again.');
     configFile.writeAsStringSync(getConfigFileText());
-    
+
     exitWithPrompt(0);
   }
   print('Loading config file');
@@ -39,8 +39,11 @@ program() async {
   //! Timers
 
   //! iCal update
-  var icalTimer = Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
-    updateICal();
+  var icalTimer = Timer.periodic(
+      Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
+    iCalUpdating = true;
+    await updateICal();
+    iCalUpdating = false;
   });
 
   //! Recording
@@ -52,6 +55,9 @@ program() async {
       "\n\n\n\n${DateTime.now().toIso8601String()} | 💤 Not currently recording.\n  Next to record: ${next ?? "No future events!"}");
 
   var recTimer = Timer.periodic(Duration(seconds: 1), (_) async {
+    // Absolutely horrible solution
+    if (iCalUpdating) return;
+
     //? update currents
     currents = await getCurrents();
 
@@ -69,38 +75,18 @@ program() async {
     if (current != _current) {
       if (current != null) {
         print(
-            "\n\n\n\n============================\n${DateTime.now().toIso8601String()} | Stopping recording of $current\n  Next to record: $next");
+            "\n\n\n\n============================\n${DateTime.now().toIso8601String()} | ■ Stopping recording of $current\n  Next to record: ${next ?? "No future events!"}");
         current!.stopRecord();
-        await Future.delayed(Duration(milliseconds: 300));
+        await Future.delayed(Duration(milliseconds: 300)); //weird
       }
 
       current = _current;
 
       if (current != null && !recorded.contains(current!.uid)) {
         print(
-            "\n\n\n\n${DateTime.now().toIso8601String()} | Starting recording of $current\n  Recording ends at: ${current!.endWithOffset().toIso8601String()}\n  Next to record: $next");
+            "\n\n\n\n${DateTime.now().toIso8601String()} | ► Starting recording of $current\n  Recording ends at: ${current!.endWithOffset().toIso8601String()}\n  Next to record: ${next ?? "No future events!"}");
         await current!.startRecord();
       }
     }
   });
-}
-
-main() async {
-  int error = 0;
-  try {
-    program();
-  } catch (e) {
-    print(
-        "Uncaught error or exception while running the program! Trying to continue...");
-    print(e);
-    print("----------------------\n\n");
-
-    error++;
-    if (error > 10) {
-      print("Error more than 10 times in a row. Exiting.");
-      exitWithPrompt(2);
-    } else {
-      main(); //? Bad solution
-    }
-  }
 }
