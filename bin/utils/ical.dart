@@ -38,8 +38,9 @@ Future updateICal() async {
         vEvent["uid"],
         DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt).toLocal(),
         DateTime.parse((vEvent["dtend"] as IcsDateTime).dt).toLocal(),
-        vEvent["summary"]);
-    if (matchEventName.hasMatch(event.title)) events.add(event);
+        vEvent["summary"],
+        vEvent["description"] ?? "");
+    if (matchEventName.hasMatch(event.title + event.description)) events.add(event);
   }
   events.sort((a, b) => b.start.compareTo(a.start));
   print("  Done. Got ${events.length} items.");
@@ -50,8 +51,9 @@ class Event {
   DateTime start;
   DateTime end;
   String title;
+  String description;
 
-  Event(this.uid, this.start, this.end, this.title);
+  Event(this.uid, this.start, this.end, this.title, this.description);
 
   Process? recorderProcess;
   File? audioFile;

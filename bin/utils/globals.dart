@@ -15,7 +15,7 @@ final Directory recordingsDir = Directory('${homeDir.path}${ps}recordings');
 
 int startEarlierByMinutes = 5;
 int endLaterByMinutes = 30;
-int keepRecordings = 0; //TODO implement
+int keepRecordings = 0;
 RegExp matchEventName = RegExp(r".");
 Uri iCalUri = Uri();
 String? ftpUsername;
