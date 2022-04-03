@@ -68,16 +68,16 @@ String renderEmailContent(String template) {
       '[stat - success count]',
       logData()
           .values
-          .where((element) => (element as String) == "successful")
+          .where((element) => element == "successful" || element == "uploaded")
           .length
           .toString());
   template = template.replaceFirst(
       '[stat - failed count]',
       logData()
           .values
-          .where((element) => (element as String) == "failed")
+          .where((element) => element == "failed")
           .length
           .toString());
-          
+
   return template;
 }
