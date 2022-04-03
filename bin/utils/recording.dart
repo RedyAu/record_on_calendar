@@ -6,13 +6,6 @@ import 'package:archive/archive_io.dart';
 import 'ftp.dart';
 import 'globals.dart';
 
-List<String> recorded = [];
-
-addRecorded(String uid) {
-  recorded.add(uid);
-  recordedListFile.writeAsStringSync(recorded.join("\n"));
-}
-
 deleteFilesOverKeepLimit() {
   if (keepRecordings == 0) return;
 

@@ -1,7 +1,8 @@
 //import 'dart:convert';
 import 'dart:io';
 
-import 'ical.dart';
+import 'Event.dart';
+import 'LogData.dart';
 
 final String version = "1.0.0";
 final String ps = Platform.pathSeparator;
@@ -12,6 +13,7 @@ final Directory soxVersionDir = Directory('${soxDir.path}${ps}sox-14.4.1');
 final File soxExe = File('${soxVersionDir.path}${ps}sox.exe');
 final File recordedListFile = File('${homeDir.path}${ps}recorded.dat');
 final Directory recordingsDir = Directory('${homeDir.path}${ps}recordings');
+final File logFile = File(homeDir.path + ps + "log.json");
 
 int startEarlierByMinutes = 5;
 int endLaterByMinutes = 30;
@@ -26,6 +28,8 @@ int iCalUpdateFrequencyMinutes = 30;
 bool iCalUpdating = false;
 
 List<Event> events = [];
+
+LogData logDataInstance = LogData();
 
 exitWithPrompt(int code) {
   print(

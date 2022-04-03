@@ -1,46 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'utils/Event.dart';
 import 'utils/globals.dart';
 import 'utils/configFile.dart';
 import 'utils/ical.dart';
 import 'utils/recording.dart';
 
 void main() async {
-  //! Startup
-
-  print(
-      '${DateTime.now().toIso8601String()} | Record on Calendar version $version by Benedek Fodor');
-  if (!homeDir.existsSync() || !configFile.existsSync()) {
-    configFile.createSync(recursive: true);
-    print(
-        'Created directory with configuration file. Please edit and run again.');
-    configFile.writeAsStringSync(getConfigFileText());
-
-    exitWithPrompt(0);
-  }
-  print('Loading config file');
-  loadConfig();
-
-  if (!soxExe.existsSync()) {
-    await getRuntime();
-  }
-
-  await updateICal();
-
-  //! Read already recorded events.
-  if (recordedListFile.existsSync()) {
-    recorded = recordedListFile.readAsLinesSync();
-  } else {
-    recordedListFile.createSync(recursive: true);
-  }
-  recordingsDir.createSync();
-
-  //! Timers
+  await setup();
 
   //! iCal update
-  var icalTimer = Timer.periodic(
-      Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
+  var icalTimer =
+      Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
     iCalUpdating = true;
     await updateICal();
     iCalUpdating = false;
@@ -82,11 +54,34 @@ void main() async {
 
       current = _current;
 
-      if (current != null && !recorded.contains(current!.uid)) {
+      if (current != null && current!.shouldRecord()) {
         print(
             "\n\n\n\n${DateTime.now().toIso8601String()} | ► Starting recording of $current\n  Recording ends at: ${current!.endWithOffset().toIso8601String()}\n  Next to record: ${next ?? "No future events!"}");
         await current!.startRecord();
       }
     }
   });
+}
+
+setup() async {
+  print(
+      '${DateTime.now().toIso8601String()} | Record on Calendar version $version by Benedek Fodor');
+  if (!homeDir.existsSync() || !configFile.existsSync()) {
+    configFile.createSync(recursive: true);
+    print(
+        'Created directory with configuration file. Please edit and run again.');
+    configFile.writeAsStringSync(getConfigFileText());
+
+    exitWithPrompt(0);
+  }
+  print('Loading config file');
+  loadConfig();
+
+  if (!soxExe.existsSync()) {
+    await getRuntime();
+  }
+
+  await updateICal();
+
+  recordingsDir.createSync();
 }
