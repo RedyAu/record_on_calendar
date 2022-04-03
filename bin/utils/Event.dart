@@ -8,7 +8,7 @@ import 'ical.dart';
 import 'recording.dart';
 
 /// started, failed, successful, noData
-enum EventStatus { started, failed, successful, noData }
+enum EventStatus { started, failed, successful, uploaded, uploadFailed, noData }
 
 class Event {
   String uid;
@@ -35,7 +35,7 @@ class Event {
     print("  Started process with PID ${recorderProcess!.pid}");
   }
 
-  stopRecord() {
+  stopRecord() async {
     if (recorderProcess == null) {
       print("  Couldn't stop recording, no process associated with event!");
       saveStatus(EventStatus.failed);
@@ -46,7 +46,7 @@ class Event {
         saveStatus(EventStatus.failed);
       }
       print("  Stopped process with PID ${recorderProcess!.pid}");
-      uploadFile(audioFile!);
+      saveStatus(await uploadFile(audioFile!));
     }
   }
 

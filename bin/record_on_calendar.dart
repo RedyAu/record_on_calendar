@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'utils/Event.dart';
 import 'utils/globals.dart';
-import 'utils/configFile.dart';
+import 'utils/config.dart';
 import 'utils/ical.dart';
+import 'utils/mailer.dart';
 import 'utils/recording.dart';
 
 void main() async {
@@ -26,7 +27,7 @@ void main() async {
   print(
       "\n\n\n\n${DateTime.now().toIso8601String()} | 💤 Not currently recording.\n  Next to record: ${next ?? "No future events!"}");
 
-  var recTimer = Timer.periodic(Duration(seconds: 1), (_) async {
+  var recTimer = Timer.periodic(Duration(seconds: 5), (_) async {
     // Absolutely horrible solution
     if (iCalUpdating) return;
 
@@ -48,8 +49,13 @@ void main() async {
       if (current != null) {
         print(
             "\n\n\n\n============================\n${DateTime.now().toIso8601String()} | ■ Stopping recording of $current\n  Next to record: ${next ?? "No future events!"}");
-        current!.stopRecord();
+        await current!.stopRecord();
         await Future.delayed(Duration(milliseconds: 300)); //weird
+
+        //? If no more events today, send email
+        if (next != null && !next!.start.isSameDate(DateTime.now())) {
+          sendDailyEmail();
+        }
       }
 
       current = _current;
