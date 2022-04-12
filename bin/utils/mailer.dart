@@ -1,17 +1,17 @@
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
-import 'Event.dart';
-import 'LogData.dart';
-import 'config.dart';
+import 'event_class.dart';
+import 'history.dart';
 import 'globals.dart';
+import 'log.dart';
 
 sendDailyEmail() async {
   if (smtpHost == null) {
-    print("\nEmail not set up, skipping sending daily update.");
+    log.print("\nEmail not set up, skipping sending daily update.");
     return;
   }
-  print("\nSending daily update email.");
+  log.print("\nSending daily update email.");
 
   final smtpServer = SmtpServer(
     smtpHost!,
@@ -55,25 +55,28 @@ String renderEmailContent(String template) {
       .toList();
   template = template.replaceFirst(
     '[future list]',
-    futureEvents
-        .sublist(
-          0,
-          (futureEvents.length > 5) ? 5 : (futureEvents.length - 1),
-        )
-        .map((e) => "$e")
-        .join("\n"),
+    futureEvents.isNotEmpty
+        ? futureEvents
+            .sublist(
+              0,
+              (futureEvents.length > 5) ? 5 : (futureEvents.length - 1),
+            )
+            .map((e) => "$e")
+            .join("\n")
+        : '---',
   );
-  template = template.replaceFirst('[time]', DateTime.now().toIso8601String());
+  template =
+      template.replaceFirst('[time]', DateTime.now().toFormattedString());
   template = template.replaceFirst(
       '[stat - success count]',
-      logData()
+      history()
           .values
           .where((element) => element == "successful" || element == "uploaded")
           .length
           .toString());
   template = template.replaceFirst(
       '[stat - failed count]',
-      logData()
+      history()
           .values
           .where((element) => element == "failed")
           .length

@@ -5,28 +5,30 @@ import 'package:archive/archive_io.dart';
 
 import 'ftp.dart';
 import 'globals.dart';
+import 'log.dart';
 
-deleteFilesOverKeepLimit() {
+deleteFilesOverKeepLimit() async {
   if (keepRecordings == 0) return;
 
-  print("  Deleting files over keep limit...");
+  log.print("  Deleting files over keep limit...");
 
   List<File> files = recordingsDir.listSync().whereType<File>().toList();
   files.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
   if (files.length > keepRecordings) {
     files = files.toList().sublist(keepRecordings);
     for (var file in files) {
-      print("    Deleting file from drive and FTP: ${file.path}");
+      log.print("    Deleting file from drive and FTP: ${file.path}");
       tryDeleteFileFromServer(file);
       file.delete();
     }
   }
+  return;
 }
 
 Future<Process> startRecordWithName(String filename) async {
   deleteFilesOverKeepLimit();
 
-  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
+  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_");
 
   var process = await Process.start(
       soxExe.path,
@@ -47,7 +49,7 @@ Future<Process> startRecordWithName(String filename) async {
 Future getRuntime() async {
   if (soxDir.existsSync()) soxDir.deleteSync(recursive: true);
 
-  print(
+  log.print(
       'Downloading and unzipping SoX (Sound library). This may take a few minutes.');
 
   await get(Uri.parse(
@@ -57,15 +59,15 @@ Future getRuntime() async {
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);
 
-    print("  Done downloading. Starting extracting.");
+    log.print("  Done downloading. Starting extracting.");
 
     soxDir.createSync(recursive: true);
     extractFileToDisk('${soxDir.path}${ps}sox.zip', soxDir.path);
 
-    print("  Done extracting.");
+    log.print("  Done extracting.");
   });
 
-  print(
+  log.print(
       'Downloading and unzipping Lame MP3 encoder. This may take a few minutes.');
 
   await get(Uri.parse(
@@ -75,7 +77,7 @@ Future getRuntime() async {
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);
 
-    print("  Done downloading. Starting extracting.");
+    log.print("  Done downloading. Starting extracting.");
 
     soxDir.createSync(recursive: true);
     extractFileToDisk('${soxDir.path}${ps}lame.zip', soxDir.path);
@@ -83,6 +85,6 @@ Future getRuntime() async {
     File lamedll = File('${soxDir.path}${ps}libmp3lame.dll');
     lamedll.renameSync('${soxVersionDir.path}${ps}libmp3lame.dll');
 
-    print("  Done extracting.");
+    log.print("  Done extracting.");
   });
 }

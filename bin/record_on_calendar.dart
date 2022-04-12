@@ -1,22 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'utils/Event.dart';
+import 'utils/event_class.dart';
 import 'utils/globals.dart';
 import 'utils/config.dart';
 import 'utils/ical.dart';
+import 'utils/log.dart';
 import 'utils/mailer.dart';
 import 'utils/recording.dart';
 
 void main() async {
+  String currentStatus = "";
+
   await setup();
 
   //! iCal update
-  var icalTimer =
-      Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
+  Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
     iCalUpdating = true;
     await updateICal();
     iCalUpdating = false;
+    log.print(currentStatus);
   });
 
   //! Recording
@@ -24,63 +27,76 @@ void main() async {
   Event? current;
   Event? next = await getNext();
 
-  print(
-      "\n\n\n\n${DateTime.now().toIso8601String()} | 💤 Not currently recording.\n  Next to record: ${next ?? "No future events!"}");
+  currentStatus =
+      "\n${DateTime.now().toFormattedString()} | 💤 Not recording.\n  Next to record: ${next ?? "No future events!"}";
+  log.print("\n\n\n" + currentStatus);
 
-  var recTimer = Timer.periodic(Duration(seconds: 5), (_) async {
-    // Absolutely horrible solution
-    if (iCalUpdating) return;
+  try {
+    while (true) {
+      // HACK Absolutely horrible solution
+      if (iCalUpdating) continue;
 
-    //? update currents
-    currents = await getCurrents();
+      //? update currents
+      currents = await getCurrents();
 
-    //? update next
-    next = await getNext();
+      //? update next
+      next = await getNext();
 
-    //? if first in currents differs from current, stop and start
-    Event? _current;
-    if (currents.isNotEmpty) {
-      _current = currents.first;
-    } else {
-      _current = null;
-    }
+      //? if first in currents differs from current, stop and start
+      Event? updatedCurrent;
+      if (currents.isNotEmpty) {
+        updatedCurrent = currents.first;
+      } else {
+        updatedCurrent = null;
+      }
 
-    if (current != _current) {
-      if (current != null) {
-        print(
-            "\n\n\n\n============================\n${DateTime.now().toIso8601String()} | ■ Stopping recording of $current\n  Next to record: ${next ?? "No future events!"}");
-        await current!.stopRecord();
-        await Future.delayed(Duration(milliseconds: 300)); //weird
+      if (current != updatedCurrent) {
+        if (current != null) {
+          log.print(
+              "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $current\n  Next to record: ${next ?? "No future events!"}");
+          currentStatus =
+              "\n${DateTime.now().toFormattedString()} | 💤 Not recording.\n  Next to record: ${next ?? "No future events!"}";
 
-        //? If no more events today, send email
-        if (next != null && !next!.start.isSameDate(DateTime.now())) {
-          sendDailyEmail();
+          current.stopRecord().then((_) {
+            //? If no more events today, send email
+            if (((next != null && !next.start.isSameDate(DateTime.now())) ||
+                    next == null) &&
+                updatedCurrent == null) {
+              sendDailyEmail();
+            }
+          });
+        }
+
+        current = updatedCurrent;
+
+        if (current != null && current.shouldRecord()) {
+          currentStatus =
+              "\n${DateTime.now().toFormattedString()} | ► Recording $current\n  Recording ends at: ${current.endWithOffset().toFormattedString()}\n  Next to record: ${next ?? "No future events!"}";
+          log.print("\n\n\n" + currentStatus);
+          await current.startRecord();
         }
       }
 
-      current = _current;
-
-      if (current != null && current!.shouldRecord()) {
-        print(
-            "\n\n\n\n${DateTime.now().toIso8601String()} | ► Starting recording of $current\n  Recording ends at: ${current!.endWithOffset().toIso8601String()}\n  Next to record: ${next ?? "No future events!"}");
-        await current!.startRecord();
-      }
+      await Future.delayed(Duration(seconds: 5));
     }
-  });
+  } catch (e, s) {
+    log.print('An exception occured in the main loop: $e\n$s');
+  }
 }
 
 setup() async {
-  print(
-      '${DateTime.now().toIso8601String()} | Record on Calendar version $version by Benedek Fodor');
+  log.print(
+      '${DateTime.now().toFormattedString()} | Record on Calendar version $version by Benedek Fodor');
   if (!homeDir.existsSync() || !configFile.existsSync()) {
     configFile.createSync(recursive: true);
-    print(
+    log.print(
         'Created directory with configuration file. Please edit and run again.');
     configFile.writeAsStringSync(getConfigFileText());
 
-    exitWithPrompt(0);
+    stdin.readLineSync();
+    exit(0);
   }
-  print('Loading config file');
+  log.print('Loading config file');
   loadConfig();
 
   if (!soxExe.existsSync()) {

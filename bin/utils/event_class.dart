@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'LogData.dart';
+import 'history.dart';
 import 'ftp.dart';
 import 'globals.dart';
-import 'ical.dart';
+import 'log.dart';
 import 'recording.dart';
 
 /// started, failed, successful, noData
@@ -27,33 +26,36 @@ class Event {
   ///Returns Process from recording SoX process.
   startRecord() async {
     saveStatus(EventStatus.started);
-    String name = '${start.toIso8601String()} - $title';
+    String name = '${start.toFormattedString()} - $title';
     recorderProcess = await startRecordWithName(name);
     audioFile = File(recordingsDir.path +
         ps +
-        "$name.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_"));
-    print("  Started process with PID ${recorderProcess!.pid}");
+        "$name.mp3".replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_"));
+    log.print("  Started process with PID ${recorderProcess!.pid}");
   }
 
-  stopRecord() async {
+  Future<bool> stopRecord() async {
     if (recorderProcess == null) {
-      print("  Couldn't stop recording, no process associated with event!");
+      log.print("  Couldn't stop recording, no process associated with event!");
       saveStatus(EventStatus.failed);
+      return false;
     } else {
       if (recorderProcess!.kill(ProcessSignal.sigterm)) {
         saveStatus(EventStatus.successful);
       } else {
         saveStatus(EventStatus.failed);
       }
-      print("  Stopped process with PID ${recorderProcess!.pid}");
+      log.print("  Stopped process with PID ${recorderProcess!.pid}");
+      await Future.delayed(Duration(milliseconds: 300));
       saveStatus(await uploadFile(audioFile!));
+      return true;
     }
   }
 
   //! Status
 
   bool saveStatus(EventStatus status) {
-    Map<String, dynamic> data = logData();
+    Map<String, dynamic> data = history();
 
     data.update(uid, (_) => status.name, ifAbsent: () => status.name);
     saveData(data);
@@ -62,10 +64,10 @@ class Event {
   }
 
   EventStatus getStatus() {
-    if (!logFile.existsSync()) return EventStatus.noData;
+    if (!historyFile.existsSync()) return EventStatus.noData;
 
     return EventStatus.values.byName(
-      logData()[uid] ?? "noData",
+      history()[uid] ?? "noData",
     );
   }
 
@@ -83,12 +85,12 @@ class Event {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    bool result = other is Event && other.uid == uid;
+    bool result = other is Event && other.start == start;
     return result;
   }
 
   @override
-  String toString() => "${start.toIso8601String()} | $title";
+  String toString() => "${start.toFormattedString()} | $title";
 
   ///Returns start time subtracted with global start earlier offset
   DateTime startWithOffset() =>

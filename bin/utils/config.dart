@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'globals.dart';
+import 'log.dart';
 
 String getConfigFileText({
   String? link,
@@ -160,8 +161,8 @@ loadConfig() {
         getConfigValue('smtpEmailContent', configString, restOfFile: true) ??
             "";
   } catch (e, stack) {
-    print(
+    log.print(
         "Could not read config file! If this error persists, please delete file and let the program regenerate it by restarting.\n$e\n$stack");
-    exitWithPrompt(1);
+    exit(1);
   }
 }
