@@ -31,12 +31,6 @@ void main() async {
 
   try {
     while (true) {
-      // _HACK Absolutely horrible solution
-      /*if (iCalUpdating) {
-        await Future.delayed(Duration(seconds: 1));
-        continue;
-      }*/
-
       //? update currents
       currents = await getCurrents();
 
