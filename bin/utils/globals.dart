@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'event_class.dart';
 import 'history.dart';
 
-final String version = "1.2.0";
+final String version = "1.2.1";
 final String ps = Platform.pathSeparator;
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File('${homeDir.path}${ps}config.txt');
