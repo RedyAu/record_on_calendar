@@ -28,7 +28,7 @@ class Log {
     var f = logFile.openWrite(mode: FileMode.writeOnlyAppend);
     f.writeln(line);
 
-    //! HACK | deprecated, needed to replace print()
+    // HACK | deprecated, needed to replace print()
     waitFor(f.flush());
     waitFor(f.close());
 

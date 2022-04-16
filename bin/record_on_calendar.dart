@@ -16,9 +16,7 @@ void main() async {
 
   //! iCal update
   Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
-    iCalUpdating = true;
     await updateICal();
-    iCalUpdating = false;
     log.print(currentStatus);
   });
 
@@ -33,8 +31,11 @@ void main() async {
 
   try {
     while (true) {
-      // HACK Absolutely horrible solution
-      if (iCalUpdating) continue;
+      // _HACK Absolutely horrible solution
+      /*if (iCalUpdating) {
+        await Future.delayed(Duration(seconds: 1));
+        continue;
+      }*/
 
       //? update currents
       currents = await getCurrents();

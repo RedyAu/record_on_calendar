@@ -29,6 +29,8 @@ Future updateICal() async {
     var req = await get(iCalUri).timeout(Duration(seconds: 30));
     String iCalString = req.body;
 
+    List<Event> _events = [];
+
     //log.print("  Parsing");
     ICalendar iCalendar = ICalendar.fromString(iCalString);
     for (Map vEvent
@@ -40,15 +42,17 @@ Future updateICal() async {
           vEvent["summary"],
           vEvent["description"] ?? "");
       if (matchEventName.hasMatch(event.title + event.description)) {
-        events.add(event);
+        _events.add(event);
       }
     }
-    // HACK remove duplicates (convert to Set, and then back)
-    events = [
-      ...{...events}
+    // remove duplicates (convert to Set, and then back)
+    _events = [
+      ...{..._events}
     ];
 
-    events.sort((a, b) => b.start.compareTo(a.start));
+    _events.sort((a, b) => b.start.compareTo(a.start));
+
+    events = _events;
 
     log.print(
         "\n\nUpdated calendar. Got ${events.length} events marked for recording.");

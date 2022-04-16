@@ -36,8 +36,6 @@ List<String> smtpEmailRecipients = [];
 String smtpEmailSubject = "";
 String smtpEmailContent = "";
 
-bool iCalUpdating = false;
-
 List<Event> events = [];
 
 HistoryData historyDataInstance = HistoryData();
