@@ -12,6 +12,5 @@ dependencies:
   ftpconnect: ^1.0.1
   http: ^0.13.4
   icalendar_parser: ^1.0.1
-  logging: ^1.0.2
   mailer: ^5.1.0
   yaml: ^3.1.1
