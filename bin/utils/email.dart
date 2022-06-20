@@ -1,7 +1,7 @@
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
-import 'event_class.dart';
+import 'recordable.dart';
 import 'history.dart';
 import '../globals.dart';
 import 'log.dart';

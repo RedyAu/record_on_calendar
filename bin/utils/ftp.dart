@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:ftpconnect/ftpconnect.dart';
 
-import 'event_class.dart';
+import 'recordable.dart';
 import '../globals.dart';
 
 import 'package:path/path.dart';

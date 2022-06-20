@@ -2,7 +2,7 @@ import 'package:http/http.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 
 import 'email.dart';
-import 'event_class.dart';
+import 'recordable.dart';
 import '../globals.dart';
 import 'log.dart';
 

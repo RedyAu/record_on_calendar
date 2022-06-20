@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:intl/intl.dart';
 
-import 'utils/event_class.dart';
+import 'utils/recordable.dart';
 import 'utils/history.dart';
 
 final String version = "2.0.0";
