@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'globals.dart';
+import '../globals.dart';
 
 import 'dart:io';
 import 'dart:cli';

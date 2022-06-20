@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:archive/archive_io.dart';
 
 import 'ftp.dart';
-import 'globals.dart';
+import '../globals.dart';
 import 'log.dart';
 
 deleteFilesOverKeepLimit() async {
@@ -28,7 +28,7 @@ deleteFilesOverKeepLimit() async {
 Future<Process> startRecordWithName(String filename) async {
   deleteFilesOverKeepLimit();
 
-  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_");
+  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
 
   var process = await Process.start(
       soxExe.path,
@@ -40,8 +40,7 @@ Future<Process> startRecordWithName(String filename) async {
       ],
       //runInShell: true,
       workingDirectory: recordingsDir.path);
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
+
   await Future.delayed(Duration(milliseconds: 300));
   return process;
 }

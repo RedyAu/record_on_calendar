@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:ftpconnect/ftpconnect.dart';
 
 import 'event_class.dart';
-import 'globals.dart';
+import '../globals.dart';
 
 import 'package:path/path.dart';
 
@@ -11,18 +11,20 @@ import 'log.dart';
 
 /// return false if unable
 Future<bool> tryDeleteFileFromServer(File file) async {
+  if (ftpHost == null) return false;
+
   FTPConnect ftpConnect = FTPConnect(ftpHost!,
       user: ftpUsername ?? 'anonymous', pass: ftpPassword ?? '');
-  await ftpConnect.connect();
   bool result = false;
   try {
+    await ftpConnect.connect();
     bool result = await ftpConnect.deleteFile(basename(file.path));
     if (!result) {
       log.print("  Couldn't delete ${basename(file.path)} from FTP server!");
     }
-  } catch (e) {
+  } catch (e, s) {
     log.print(
-        "  Exception occured while uploading file ${basename(file.path)}:\n$e");
+        "  Exception occured while deleting file ${basename(file.path)}:\n$e\n$s");
   }
   if (!result) return result;
 }

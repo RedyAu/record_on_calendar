@@ -3,16 +3,33 @@ import 'package:mailer/smtp_server.dart';
 
 import 'event_class.dart';
 import 'history.dart';
-import 'globals.dart';
+import '../globals.dart';
 import 'log.dart';
 
 sendDailyEmail() async {
-  if (smtpHost == null) {
-    log.print("\nEmail not set up, skipping sending daily update.");
+  if (smtpHost == null || !dailyEmail) {
+    log.print("\nEmail disabled, skipping sending daily email.");
     return;
   }
-  log.print("\nSending daily update email.");
+  log.print("\nSending daily email.");
 
+  sendEmail(dailyEmailSenderName, dailyEmailRecipients, dailyEmailSubject,
+      renderEmailContent(dailyEmailContent));
+}
+
+sendCalendarEmail() async {
+  if (smtpHost == null || !calendarEmail) {
+    log.print("\nEmail disabled, skipping sending calendar update email.");
+    return;
+  }
+  log.print("\nSending calendar update email.");
+
+  sendEmail(calendarEmailSenderName, calendarEmailRecipients,
+      calendarEmailSubject, renderEmailContent(calendarEmailContent));
+}
+
+sendEmail(String senderName, List<String> recipients, String subject,
+    String content) async {
   final smtpServer = SmtpServer(
     smtpHost!,
     port: smtpPort,
@@ -22,10 +39,10 @@ sendDailyEmail() async {
   );
 
   final message = Message()
-    ..from = Address(smtpUser, smtpEmailSenderName)
-    ..recipients.addAll(smtpEmailRecipients)
-    ..subject = smtpEmailSubject
-    ..text = renderEmailContent(smtpEmailContent);
+    ..from = Address(smtpUser, senderName)
+    ..recipients.addAll(recipients)
+    ..subject = subject
+    ..text = renderEmailContent(content);
 
   send(message, smtpServer).then((value) => "  Email sent.\n$value");
 }
@@ -48,7 +65,7 @@ String renderEmailContent(String template) {
         )
         .join("\n"),
   );
-  List<Event> futureEvents = events.reversed
+  List<Recordable> futureEvents = events.reversed
       .where(
         (element) => element.start.isAfter(DateTime.now()),
       )
@@ -59,7 +76,7 @@ String renderEmailContent(String template) {
         ? futureEvents
             .sublist(
               0,
-              (futureEvents.length > 5) ? 5 : (futureEvents.length - 1),
+              (futureEvents.length > 10) ? 10 : futureEvents.length,
             )
             .map((e) => "$e")
             .join("\n")
@@ -71,14 +88,17 @@ String renderEmailContent(String template) {
       '[stat - success count]',
       history()
           .values
-          .where((element) => element == "successful" || element == "uploaded")
+          .where((element) =>
+              element == EventStatus.successful.name ||
+              element == EventStatus.uploaded.name)
           .length
           .toString());
   template = template.replaceFirst(
       '[stat - failed count]',
       history()
           .values
-          .where((element) => element == "failed")
+          .where((element) => !(element == EventStatus.successful.name ||
+              element == EventStatus.uploaded.name))
           .length
           .toString());
 

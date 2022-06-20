@@ -1,14 +1,17 @@
 //import 'dart:convert';
 import 'dart:io';
+
 import 'package:intl/intl.dart';
 
-import 'event_class.dart';
-import 'history.dart';
+import 'utils/event_class.dart';
+import 'utils/history.dart';
 
-final String version = "1.2.1";
+final String version = "2.0.0";
+
 final String ps = Platform.pathSeparator;
+
 final Directory homeDir = Directory('RecordOnCalendar');
-final File configFile = File('${homeDir.path}${ps}config.txt');
+final File configFile = File('${homeDir.path}${ps}config.yaml');
 final Directory soxDir = Directory('${homeDir.path}${ps}sox');
 final Directory soxVersionDir = Directory('${soxDir.path}${ps}sox-14.4.1');
 final File soxExe = File('${soxVersionDir.path}${ps}sox.exe');
@@ -31,14 +34,24 @@ String? smtpHost;
 int smtpPort = 0;
 String smtpUser = "";
 String smtpPassword = "";
-String smtpEmailSenderName = "";
-List<String> smtpEmailRecipients = [];
-String smtpEmailSubject = "";
-String smtpEmailContent = "";
 
-List<Event> events = [];
+bool dailyEmail = false;
+List<String> dailyEmailRecipients = [];
+String dailyEmailSenderName = "";
+String dailyEmailSubject = "";
+String dailyEmailContent = "";
+
+bool calendarEmail = false;
+List<String> calendarEmailRecipients = [];
+String calendarEmailSenderName = "";
+String calendarEmailSubject = "";
+String calendarEmailContent = "";
+
+List<Recordable> events = [];
 
 HistoryData historyDataInstance = HistoryData();
+
+final Map progressIndicator = {0: r'\', 1: '|', 2: '/', 3: '-'};
 
 // https://stackoverflow.com/questions/52978195/comparing-only-dates-of-datetimes-in-dart
 extension DateOnlyCompare on DateTime {

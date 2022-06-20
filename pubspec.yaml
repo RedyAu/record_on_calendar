@@ -1,21 +1,17 @@
 name: record_on_calendar
 description: A simple program to record audio automatically according to iCal calendar events.
 # Also change in utils/globals.dart
-version: 1.2.1
+version: 2.0.0
 
 environment:
   sdk: '>=2.16.1 <3.0.0'
 
-
-# dependencies:
-#   path: ^1.8.0
-
-dev_dependencies:
-  lints: ^1.0.0
 dependencies: 
   archive: ^3.2.2
   console: ^4.1.0
   ftpconnect: ^1.0.1
   http: ^0.13.4
   icalendar_parser: ^1.0.1
+  logging: ^1.0.2
   mailer: ^5.1.0
+  yaml: ^3.1.1

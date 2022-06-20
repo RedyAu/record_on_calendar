@@ -1,22 +1,22 @@
 import 'dart:io';
 
-import 'history.dart';
+import '../globals.dart';
 import 'ftp.dart';
-import 'globals.dart';
+import 'history.dart';
 import 'log.dart';
 import 'recording.dart';
 
 /// started, failed, successful, noData
 enum EventStatus { started, failed, successful, uploaded, uploadFailed, noData }
 
-class Event {
+class Recordable {
   String uid;
   DateTime start;
   DateTime end;
   String title;
   String description;
 
-  Event(this.uid, this.start, this.end, this.title, this.description);
+  Recordable(this.uid, this.start, this.end, this.title, this.description);
 
   Process? recorderProcess;
   File? audioFile;
@@ -73,7 +73,12 @@ class Event {
 
   bool shouldRecord() {
     EventStatus status = getStatus();
-    return (status == EventStatus.failed || status == EventStatus.noData);
+    if (status != EventStatus.successful ||
+        (status == EventStatus.started && recorderProcess == null)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   //! Overrides and fields
@@ -85,7 +90,7 @@ class Event {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    bool result = other is Event && other.start == start;
+    bool result = other is Recordable && other.start == start;
     return result;
   }
 

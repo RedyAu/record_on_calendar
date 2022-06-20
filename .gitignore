@@ -9,3 +9,4 @@ RecordOnCalendar/recordings
 RecordOnCalendar/config.txt
 RecordOnCalendar/recorded.dat
 bin/record_on_calendar.exe
+bin/utils/dummy.dart
