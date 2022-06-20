@@ -7,7 +7,7 @@ _Using SoX and LAME (downloads runtimes automatically)._
 
 Example config:
 
-```
+```yaml
 # █▀█ █▀▀ █▀▀ █▀█ █▄░█ █▀▀ ▄▀█ █░░
 # █▀▄ ██▄ █▄▄ █▄█ █░▀█ █▄▄ █▀█ █▄▄
 
