@@ -13,10 +13,10 @@ import 'utils/recording.dart';
 void main() async {
   await setup();
 
-  //! Watchdog
+  //! Watchdog and display
   DateTime lastTick = DateTime.now();
-  Timer.periodic(Duration(seconds: 1), (timer) {
-    if (lastTick.isBefore(DateTime.now().subtract(Duration(seconds: 5)))) {
+  Timer.periodic(Duration(seconds: 5), (timer) {
+    if (lastTick.isBefore(DateTime.now().subtract(Duration(seconds: 10)))) {
       log.print(
           "\n${DateTime.now().toFormattedString()}\n=======\nWARNING\n=======\nProgram was unresponsive for ${lastTick.difference(DateTime.now())}!\nInresponsive since: $lastTick");
     }
@@ -102,7 +102,7 @@ setup() async {
     stdin.readLineSync();
     exit(0);
   }
-  
+
   loadConfig();
 
   if (!soxExe.existsSync()) {
