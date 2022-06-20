@@ -18,7 +18,7 @@ void main() async {
   Timer.periodic(Duration(seconds: 5), (timer) {
     if (lastTick.isBefore(DateTime.now().subtract(Duration(seconds: 10)))) {
       log.print(
-          "\n${DateTime.now().toFormattedString()}\n=======\nWARNING\n=======\nProgram was unresponsive for ${lastTick.difference(DateTime.now())}!\nInresponsive since: $lastTick");
+          "\n${DateTime.now().toFormattedString()}\n=======\nWARNING\n=======\nProgram was unresponsive for ${lastTick.difference(DateTime.now())}!\nUnresponsive since: $lastTick");
     }
     lastTick = DateTime.now();
     currentStatus.printStatus();
