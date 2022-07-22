@@ -74,7 +74,7 @@ keep: $keep
 
 # Send email notification after last recording on a day
 # true - enable; false - disable
-dailyEmail: $dailyEmail 
+dailyEmail: $dailyEmail
 # Example for email recipients: [example@example.com, tim@apple.com]
 dailyEmailRecipients: $dailyEmailRecipients
 calendarEmail: $calendarEmail
