@@ -25,9 +25,6 @@ int endLaterByMinutes = 30;
 int keepRecordings = 0;
 RegExp matchEventName = RegExp(r".");
 Uri iCalUri = Uri();
-String? ftpUsername;
-String? ftpPassword;
-String? ftpHost;
 int iCalUpdateFrequencyMinutes = 30;
 
 String? smtpHost;

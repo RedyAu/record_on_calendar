@@ -88,17 +88,14 @@ String renderEmailContent(String template) {
       '[stat - success count]',
       history()
           .values
-          .where((element) =>
-              element == RecordingStatus.successful.name ||
-              element == RecordingStatus.uploaded.name)
+          .where((element) => element == RecordingStatus.successful.name)
           .length
           .toString());
   template = template.replaceFirst(
       '[stat - failed count]',
       history()
           .values
-          .where((element) => !(element == RecordingStatus.successful.name ||
-              element == RecordingStatus.uploaded.name))
+          .where((element) => !(element == RecordingStatus.successful.name))
           .length
           .toString());
 

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:archive/archive_io.dart';
 
-import 'ftp.dart';
 import '../globals.dart';
 import 'log.dart';
 
@@ -17,8 +16,8 @@ deleteFilesOverKeepLimit() async {
   if (files.length > keepRecordings) {
     files = files.toList().sublist(keepRecordings);
     for (var file in files) {
-      log.print("    Deleting file from drive and FTP: ${file.path}");
-      tryDeleteFileFromServer(file);
+      log.print("    Deleting file: ${file.path}");
+  
       file.delete();
     }
   }

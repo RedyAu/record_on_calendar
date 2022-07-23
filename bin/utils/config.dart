@@ -61,10 +61,6 @@ regex: $regex
 
 # FILES
 
-# Upload files to FTP - set field to "null" to disable
-ftphost: $ftphost
-username: $username
-password: $password
 # Keep this number of latest recordings, delete older automatically (0 means never delete)
 keep: $keep
 
@@ -142,9 +138,6 @@ loadConfig() {
         earlier: config['earlier'],
         later: config['later'],
         regex: config['regex'],
-        ftphost: config['ftphost'],
-        username: config['username'],
-        password: config['password'],
         keep: config['keep'],
         dailyEmail: config['dailyEmail'],
         dailyEmailRecipients: config['dailyEmailRecipients'].toString(),
@@ -173,9 +166,6 @@ loadConfig() {
     startEarlierByMinutes = config['earlier'];
     endLaterByMinutes = config['later'];
     matchEventName = RegExp(config['regex']!);
-    ftpHost = config['ftphost'];
-    ftpUsername = config['username'];
-    ftpPassword = config['password'];
     keepRecordings = config['keep'];
     dailyEmail = config['dailyEmail'] ?? false;
     dailyEmailRecipients =

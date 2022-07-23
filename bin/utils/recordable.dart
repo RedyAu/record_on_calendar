@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import '../globals.dart';
-import 'ftp.dart';
 import 'history.dart';
 import 'log.dart';
 import 'recording.dart';
@@ -10,8 +9,6 @@ enum RecordingStatus {
   started,
   failed,
   successful,
-  uploaded,
-  uploadFailed,
   noData,
 }
 
@@ -52,8 +49,7 @@ class Recordable {
         saveStatus(RecordingStatus.failed);
       }
       log.print("  Stopped process with PID ${recorderProcess!.pid}");
-      await Future.delayed(Duration(milliseconds: 300));
-      saveStatus(await uploadFile(audioFile!));
+      //await Future.delayed(Duration(milliseconds: 300)); //TODO why was this needed
       return true;
     }
   }
