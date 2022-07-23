@@ -11,13 +11,15 @@ deleteFilesOverKeepLimit() async {
 
   log.print("  Deleting files over keep limit...");
 
-  List<File> files = recordingsDir.listSync().whereType<File>().toList();
-  files.sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
-  if (files.length > keepRecordings) {
-    files = files.toList().sublist(keepRecordings);
-    for (var file in files) {
+  List<FileSystemEntity> entities = recordingsDir.listSync().toList();
+  entities.sort(
+      (a, b) => b.tryLastModifiedSync().compareTo(a.tryLastModifiedSync()));
+  if (entities.length > keepRecordings) {
+    entities = entities.toList().sublist(keepRecordings);
+
+    for (var file in entities) {
       log.print("    Deleting file: ${file.path}");
-  
+
       file.delete();
     }
   }
@@ -27,7 +29,7 @@ deleteFilesOverKeepLimit() async {
 Future<Process> startRecordWithName(String filename) async {
   deleteFilesOverKeepLimit();
 
-  filename = "$filename.mp3".replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
+  filename = "$filename.mp3".getSanitizedForFilename();
 
   var process = await Process.start(
       soxExe.path,

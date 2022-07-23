@@ -67,3 +67,34 @@ extension GetFormattedString on DateTime {
     }
   }
 }
+
+extension EntityWithModifiedDate on FileSystemEntity {
+  ///Returns lastModifiedSync for File; for a Directory, returns lastModifiedSync of the first file in it\
+  ///Returns epoch if can't return date.
+  DateTime tryLastModifiedSync() {
+    if (this is File) {
+      try {
+        return (this as File).lastModifiedSync();
+      } catch (e) {
+        return DateTime.fromMillisecondsSinceEpoch(0);
+      }
+    } else if (this is Directory) {
+      try {
+        return (this as Directory)
+            .listSync()
+            .whereType<File>()
+            .first
+            .lastModifiedSync();
+      } catch (e) {
+        return DateTime.fromMillisecondsSinceEpoch(0);
+      }
+    } else {
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+  }
+}
+
+extension SanitizeForFilename on String {
+  String getSanitizedForFilename() =>
+      this.replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_");
+}

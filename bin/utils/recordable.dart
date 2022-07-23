@@ -31,9 +31,8 @@ class Recordable {
     saveStatus(RecordingStatus.started);
     String name = '${start.toFormattedString()} - $title';
     recorderProcess = await startRecordWithName(name);
-    audioFile = File(recordingsDir.path +
-        ps +
-        "$name.mp3".replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_"));
+    audioFile =
+        File(recordingsDir.path + ps + "$name.mp3".getSanitizedForFilename());
     log.print("  Started process with PID ${recorderProcess!.pid}");
   }
 
