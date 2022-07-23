@@ -6,8 +6,14 @@ import 'history.dart';
 import 'log.dart';
 import 'recording.dart';
 
-/// started, failed, successful, noData
-enum EventStatus { started, failed, successful, uploaded, uploadFailed, noData }
+enum RecordingStatus {
+  started,
+  failed,
+  successful,
+  uploaded,
+  uploadFailed,
+  noData,
+}
 
 class Recordable {
   String uid;
@@ -25,7 +31,7 @@ class Recordable {
 
   ///Returns Process from recording SoX process.
   startRecord() async {
-    saveStatus(EventStatus.started);
+    saveStatus(RecordingStatus.started);
     String name = '${start.toFormattedString()} - $title';
     recorderProcess = await startRecordWithName(name);
     audioFile = File(recordingsDir.path +
@@ -37,13 +43,13 @@ class Recordable {
   Future<bool> stopRecord() async {
     if (recorderProcess == null) {
       log.print("  Couldn't stop recording, no process associated with event!");
-      saveStatus(EventStatus.failed);
+      saveStatus(RecordingStatus.failed);
       return false;
     } else {
       if (recorderProcess!.kill(ProcessSignal.sigterm)) {
-        saveStatus(EventStatus.successful);
+        saveStatus(RecordingStatus.successful);
       } else {
-        saveStatus(EventStatus.failed);
+        saveStatus(RecordingStatus.failed);
       }
       log.print("  Stopped process with PID ${recorderProcess!.pid}");
       await Future.delayed(Duration(milliseconds: 300));
@@ -54,7 +60,7 @@ class Recordable {
 
   //! Status
 
-  bool saveStatus(EventStatus status) {
+  bool saveStatus(RecordingStatus status) {
     Map<String, dynamic> data = history();
 
     data.update(uid, (_) => status.name, ifAbsent: () => status.name);
@@ -63,22 +69,18 @@ class Recordable {
     return true;
   }
 
-  EventStatus getStatus() {
-    if (!historyFile.existsSync()) return EventStatus.noData;
+  RecordingStatus getStatus() {
+    if (!historyFile.existsSync()) return RecordingStatus.noData;
 
-    return EventStatus.values.byName(
+    return RecordingStatus.values.byName(
       history()[uid] ?? "noData",
     );
   }
 
-  bool shouldRecord() {
-    EventStatus status = getStatus();
-    if (status != EventStatus.successful ||
-        (status == EventStatus.started && recorderProcess == null)) {
-      return true;
-    } else {
-      return false;
-    }
+  bool shouldStartRecord() {
+    RecordingStatus status = getStatus();
+    return (status != RecordingStatus.successful) ||
+        (status == RecordingStatus.started && recorderProcess == null);
   }
 
   //! Overrides and fields

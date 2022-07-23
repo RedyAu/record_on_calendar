@@ -29,10 +29,10 @@ Future<bool> tryDeleteFileFromServer(File file) async {
   if (!result) return result;
 }
 
-Future<EventStatus> uploadFile(File file) async {
+Future<RecordingStatus> uploadFile(File file) async {
   if (ftpHost == null) {
     log.print("  FTP host unconfigured, skipping upload.");
-    return EventStatus.successful;
+    return RecordingStatus.successful;
   }
 
   FTPConnect ftpConnect = FTPConnect(ftpHost!,
@@ -45,7 +45,7 @@ Future<EventStatus> uploadFile(File file) async {
     await ftpConnect.connect();
   } catch (e) {
     log.print("      Couldn't connect!\n$e");
-    return EventStatus.uploadFailed;
+    return RecordingStatus.uploadFailed;
   }
 
   try {
@@ -53,9 +53,9 @@ Future<EventStatus> uploadFile(File file) async {
     await ftpConnect.uploadFileWithRetry(file, pRetryCount: 5);
     log.print("    Successfully uploaded ${file.path}. Disconnecting.");
     ftpConnect.disconnect();
-    return EventStatus.uploaded;
+    return RecordingStatus.uploaded;
   } catch (e) {
     log.print("      Error while uploading file!\n$e");
   }
-  return EventStatus.uploadFailed;
+  return RecordingStatus.uploadFailed;
 }

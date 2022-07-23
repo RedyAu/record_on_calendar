@@ -30,7 +30,7 @@ void main() async {
     currentStatus.printStatus();
   });
 
-  Recordable? currentRecordable;
+  Recordable? current;
   Recordable? nextRecordable;
 
   //! Recording
@@ -45,7 +45,7 @@ void main() async {
       //? update next
       nextRecordable = getNext();
 
-      //? if first in currents differs from current, stop and start
+      //? If first in currents differs from current, stop and start
       Recordable? updatedCurrent;
       if (currents.isNotEmpty) {
         updatedCurrent = currents.first;
@@ -53,14 +53,14 @@ void main() async {
         updatedCurrent = null;
       }
 
-      if (currentRecordable != updatedCurrent) {
+      if (current != updatedCurrent) {
         //? Stop recording
-        if (currentRecordable != null) {
+        if (current != null && current != updatedCurrent) {
           log.print(
-              "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $currentRecordable\n\n");
-          currentStatus.update(AppStatus.idle, currentRecordable);
+              "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $current\n\n");
+          currentStatus.update(AppStatus.idle, current);
 
-          currentRecordable.stopRecord().then((_) {
+          current.stopRecord().then((_) {
             //? If no more events today, send email
             if (((nextRecordable != null &&
                         !nextRecordable.start.isSameDate(DateTime.now())) ||
@@ -70,17 +70,17 @@ void main() async {
             }
           });
         }
+      }
+      
+      current = updatedCurrent;
 
-        currentRecordable = updatedCurrent;
+      //? Start recording
+      if (current != null && current.shouldStartRecord()) {
+        currentStatus.update(AppStatus.recording, current);
+        log.print(
+            "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current\n\n");
 
-        //? Start recording
-        if (currentRecordable != null && currentRecordable.shouldRecord()) {
-          currentStatus.update(AppStatus.recording, currentRecordable);
-          log.print(
-              "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $currentRecordable\n\n");
-
-          await currentRecordable.startRecord();
-        }
+        await current.startRecord();
       }
 
       await Future.delayed(Duration(seconds: 5));

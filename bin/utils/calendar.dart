@@ -25,12 +25,10 @@ List<Recordable> getCurrents() {
 
 Future updateICal() async {
   //log.print("\n\n\n\n${DateTime.now().getFormattedString()} | Updating Calendar");
-  log.print("\n\n${DateTime.now().toFormattedString()} | Updating Calendar");
+  log.print("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
   int nextEventsHash = events.reversed
-      .where(
-        (element) => element.start.isAfter(DateTime.now()),
-      )
+      .where((element) => element.start.isAfter(DateTime.now()))
       .join()
       .hashCode;
 
@@ -69,16 +67,14 @@ Future updateICal() async {
 
     events = _events;
 
-    log.print("\nGot ${events.length} events marked for recording.");
-  } catch (e, s) {
+    log.print("Got ${events.length} events marked for recording.");
+  } catch (e, stack) {
     log.print(
-        "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$s");
+        "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$stack");
   }
 
   int updatedNextEventsHash = events.reversed
-      .where(
-        (element) => element.start.isAfter(DateTime.now()),
-      )
+      .where((element) => element.start.isAfter(DateTime.now()))
       .join()
       .hashCode;
 
