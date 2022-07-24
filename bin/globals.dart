@@ -15,6 +15,7 @@ final File configFile = File('${homeDir.path}${ps}config.yaml');
 final Directory soxDir = Directory('${homeDir.path}${ps}sox');
 final Directory soxVersionDir = Directory('${soxDir.path}${ps}sox-14.4.1');
 final File soxExe = File('${soxVersionDir.path}${ps}sox.exe');
+final File ffmpegExe = File('');//TODO populate
 final File recordedListFile = File('${homeDir.path}${ps}recorded.dat');
 final Directory recordingsDir = Directory('${homeDir.path}${ps}recordings');
 final File historyFile = File(homeDir.path + ps + "history.json");

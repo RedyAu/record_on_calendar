@@ -115,12 +115,12 @@ calendarEmailContent: ${calendarEmailContent ?? """|
 """;
 
 loadConfig() {
-  log.print('Loading config file');
+  logger.print('Loading config file');
   Map config;
   try {
     config = loadYaml(configFile.readAsStringSync());
   } catch (e, stack) {
-    log.print(
+    logger.print(
         "Could not parse config file! If this error persists, please delete file and let the program regenerate it by restarting.\n$e\n$stack");
     stdin.readLineSync();
     exit(1);
@@ -184,7 +184,7 @@ loadConfig() {
     calendarEmailSubject = config['calendarEmailSubject'];
     calendarEmailContent = config['calendarEmailContent'];
   } catch (e, stack) {
-    log.print(
+    logger.print(
         "Could not get config values! If this error persists, please delete file and let the program regenerate it by restarting.\n$e\n$stack");
     stdin.readLineSync();
     exit(1);

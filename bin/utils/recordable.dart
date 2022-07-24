@@ -33,12 +33,13 @@ class Recordable {
     recorderProcess = await startRecordWithName(name);
     audioFile =
         File(recordingsDir.path + ps + "$name.mp3".getSanitizedForFilename());
-    log.print("  Started process with PID ${recorderProcess!.pid}");
+    logger.print("  Started process with PID ${recorderProcess!.pid}");
   }
 
   Future<bool> stopRecord() async {
     if (recorderProcess == null) {
-      log.print("  Couldn't stop recording, no process associated with event!");
+      logger.print(
+          "  Couldn't stop recording, no process associated with event!");
       saveStatus(RecordingStatus.failed);
       return false;
     } else {
@@ -47,7 +48,7 @@ class Recordable {
       } else {
         saveStatus(RecordingStatus.failed);
       }
-      log.print("  Stopped process with PID ${recorderProcess!.pid}");
+      logger.print("  Stopped process with PID ${recorderProcess!.pid}");
       //await Future.delayed(Duration(milliseconds: 300)); //TODO why was this needed
       return true;
     }

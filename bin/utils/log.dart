@@ -5,17 +5,17 @@ import '../globals.dart';
 import 'dart:io';
 import 'dart:cli';
 
-Log log = Log();
+Logger logger = Logger();
 
 main() {
-  log.print("halo");
-  log.print("halloooo");
+  logger.print("halo");
+  logger.print("halloooo");
 }
 
-class Log {
+class Logger {
   late File logFile;
 
-  Log() {
+  Logger() {
     logFile =
         File(logDir.path + ps + DateTime.now().toFormattedString() + ".log");
   }

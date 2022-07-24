@@ -9,6 +9,7 @@ environment:
 dependencies: 
   archive: ^3.2.2
   console: ^4.1.0
+  ffmpeg_cli: ^0.1.0
   http: ^0.13.4
   icalendar_parser: ^1.0.1
   mailer: ^5.1.0

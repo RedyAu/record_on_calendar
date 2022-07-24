@@ -8,10 +8,10 @@ import 'log.dart';
 
 sendDailyEmail() async {
   if (smtpHost == null || !dailyEmail) {
-    log.print("\nEmail disabled, skipping sending daily email.");
+    logger.print("\nEmail disabled, skipping sending daily email.");
     return;
   }
-  log.print("\nSending daily email.");
+  logger.print("\nSending daily email.");
 
   sendEmail(dailyEmailSenderName, dailyEmailRecipients, dailyEmailSubject,
       renderEmailContent(dailyEmailContent));
@@ -19,10 +19,10 @@ sendDailyEmail() async {
 
 sendCalendarEmail() async {
   if (smtpHost == null || !calendarEmail) {
-    log.print("\nEmail disabled, skipping sending calendar update email.");
+    logger.print("\nEmail disabled, skipping sending calendar update email.");
     return;
   }
-  log.print("\nSending calendar update email.");
+  logger.print("\nSending calendar update email.");
 
   sendEmail(calendarEmailSenderName, calendarEmailRecipients,
       calendarEmailSubject, renderEmailContent(calendarEmailContent));

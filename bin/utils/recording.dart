@@ -9,7 +9,7 @@ import 'log.dart';
 deleteFilesOverKeepLimit() async {
   if (keepRecordings == 0) return;
 
-  log.print("  Deleting files over keep limit...");
+  logger.print("  Deleting files over keep limit...");
 
   List<FileSystemEntity> entities = recordingsDir.listSync().toList();
   entities.sort(
@@ -18,7 +18,7 @@ deleteFilesOverKeepLimit() async {
     entities = entities.toList().sublist(keepRecordings);
 
     for (var file in entities) {
-      log.print("    Deleting file: ${file.path}");
+      logger.print("    Deleting file: ${file.path}");
 
       file.delete();
     }
@@ -49,7 +49,7 @@ Future<Process> startRecordWithName(String filename) async {
 Future getRuntime() async {
   if (soxDir.existsSync()) soxDir.deleteSync(recursive: true);
 
-  log.print(
+  logger.print(
       'Downloading and unzipping SoX (Sound library). This may take a few minutes.');
 
   await get(Uri.parse(
@@ -59,15 +59,15 @@ Future getRuntime() async {
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);
 
-    log.print("  Done downloading. Starting extracting.");
+    logger.print("  Done downloading. Starting extracting.");
 
     soxDir.createSync(recursive: true);
     extractFileToDisk('${soxDir.path}${ps}sox.zip', soxDir.path);
 
-    log.print("  Done extracting.");
+    logger.print("  Done extracting.");
   });
 
-  log.print(
+  logger.print(
       'Downloading and unzipping Lame MP3 encoder. This may take a few minutes.');
 
   await get(Uri.parse(
@@ -77,7 +77,7 @@ Future getRuntime() async {
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);
 
-    log.print("  Done downloading. Starting extracting.");
+    logger.print("  Done downloading. Starting extracting.");
 
     soxDir.createSync(recursive: true);
     extractFileToDisk('${soxDir.path}${ps}lame.zip', soxDir.path);
@@ -85,6 +85,6 @@ Future getRuntime() async {
     File lamedll = File('${soxDir.path}${ps}libmp3lame.dll');
     lamedll.renameSync('${soxVersionDir.path}${ps}libmp3lame.dll');
 
-    log.print("  Done extracting.");
+    logger.print("  Done extracting.");
   });
 }
