@@ -12,6 +12,7 @@ final String ps = Platform.pathSeparator;
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File('${homeDir.path}${ps}config.yaml');
+final File tracksFile = File('${homeDir.path}${ps}tracks.yaml');
 final Directory soxDir = Directory('${homeDir.path}${ps}sox');
 final Directory soxVersionDir = Directory('${soxDir.path}${ps}sox-14.4.1');
 final File soxExe = File('${soxVersionDir.path}${ps}sox.exe');
