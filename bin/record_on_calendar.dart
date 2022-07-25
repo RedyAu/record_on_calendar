@@ -9,6 +9,7 @@ import 'utils/calendar.dart';
 import 'utils/log.dart';
 import 'utils/email.dart';
 import 'utils/recording.dart';
+import 'utils/tracks.dart';
 
 void main() async {
   await setup();
@@ -91,25 +92,34 @@ void main() async {
 }
 
 setup() async {
-  logger.print(
-      '${DateTime.now().toFormattedString()} | Record on Calendar version $version by Benedek Fodor');
-  if (!homeDir.existsSync() || !configFile.existsSync()) {
-    configFile.createSync(recursive: true);
+  try {
     logger.print(
-        'Created directory with configuration file. Please edit and run again.');
-    configFile.writeAsStringSync(generateConfigText());
+        '${DateTime.now().toFormattedString()} | Record on Calendar version $version by Benedek Fodor');
+    if (!homeDir.existsSync() || !configFile.existsSync()) {
+      configFile.createSync(recursive: true);
+      logger.print(
+          'Created directory with configuration file. Please edit and run again.');
+      configFile.writeAsStringSync(generateConfigText());
 
+      stdin.readLineSync();
+      exit(0);
+    }
+
+    loadConfig();
+
+    if (!ffmpegExe.existsSync()) {
+      await getRuntime();
+    }
+
+    updateDevices();
+
+    await updateICal();
+
+    recordingsDir.createSync();
+  } catch (e, s) {
+    print(
+        "Couldn't start the program. If the error persists, delete the RecordOnCalendar folder, and let the program re-generate everything.\nError: $e\n$s");
     stdin.readLineSync();
-    exit(0);
+    exit(1);
   }
-
-  loadConfig();
-
-  if (!ffmpegExe.existsSync()) {
-    await getRuntime();
-  }
-
-  await updateICal();
-
-  recordingsDir.createSync();
 }

@@ -191,6 +191,4 @@ loadConfig() {
     stdin.readLineSync();
     exit(1);
   }
-
-  updateDevices();
 }
