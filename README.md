@@ -3,7 +3,7 @@
 An overcomplicated, but pretty smart program to record multitrack audio automatically according to iCal calendar events.
 Fully configurable. (Currently only supports 128 kbps mp3 recording, this can be easily expanded if needed - drop an issue)
 
-_Using SoX and LAME (downloads runtimes automatically)._
+_Using FFMPEG / DirectShow (downloads runtime automatically)._
 
 ### Example config:
 
