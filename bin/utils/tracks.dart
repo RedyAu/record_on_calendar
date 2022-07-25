@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:yaml/yaml.dart';
 
@@ -18,7 +17,7 @@ class AudioDevice {
 
   String toYamlSnippet() => """
 $name:
-  fileName: $_fileName
+  fileName: ${_fileName ?? '~'}
   record: $enabled
   id: '$id'
 """;
@@ -133,7 +132,9 @@ void updateDevices() {
 
   if (devicesToRecord.isEmpty) {
     logger
-        .print('\nERROR! You have no devices enabled. Please edit tracks.yaml');
+        .print('\nERROR! You have no devices enabled. Please edit tracks.yaml and run again.');
+    stdin.readLineSync();
+    exit(1);
   }
 }
 

@@ -27,7 +27,8 @@ class CurrentStatus {
         print("""
 
 ${DateTime.now().toFormattedString()} | ZzZ Not recording.
-  Next to record: ${_next ?? "No future events!"}""");
+  Next to record: ${_next ?? "No future events!"}
+""");
         break;
       case AppStatus.recording:
         if (_current != null) {

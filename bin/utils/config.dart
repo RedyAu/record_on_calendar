@@ -6,6 +6,8 @@ import '../globals.dart';
 import 'log.dart';
 import 'package:path/path.dart';
 
+import 'tracks.dart';
+
 String generateConfigText({
   String link = "= PLEASE PUT AN ICAL LINK HERE =",
   int frequency = 30,
@@ -185,8 +187,10 @@ loadConfig() {
     calendarEmailContent = config['calendarEmailContent'];
   } catch (e, stack) {
     logger.print(
-        "Could not get config values! If this error persists, please delete file and let the program regenerate it by restarting.\n$e\n$stack");
+        "Could not get config values! If this error persists, please delete file and let the program regenerate it by restarting.\nAre you sure you supplied an iCal link?\n$e\n$stack");
     stdin.readLineSync();
     exit(1);
   }
+
+  updateDevices();
 }

@@ -50,24 +50,7 @@ Future<Process> startRecordWithName(String recordingTitle) async {
               ])
           .reduce((value, element) => value.followedBy(element).toList()),
       //runInShell: true,
-      workingDirectory: currentDir.path,
-      mode: ProcessStartMode.inheritStdio); //TODO removeme
-
-  print("Command:\n" +
-      devicesToRecord
-          .asMap()
-          .entries
-          .map((e) => [
-                '-f',
-                'dshow',
-                '-i',
-                'audio="${e.value.id}"',
-                '-map',
-                '${e.key}',
-                '"${e.value.fileName}.mp3"'
-              ])
-          .reduce((value, element) => value.followedBy(element).toList())
-          .join(' ')); //TODO removeme
+      workingDirectory: currentDir.path);
 
   await Future.delayed(Duration(milliseconds: 300));
   return process;
