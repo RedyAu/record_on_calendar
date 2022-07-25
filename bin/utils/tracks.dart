@@ -133,8 +133,6 @@ void updateDevices() {
   if (devicesToRecord.isEmpty) {
     logger
         .print('\nERROR! You have no devices enabled. Please edit tracks.yaml and run again.');
-    stdin.readLineSync();
-    exit(1);
   }
 }
 
