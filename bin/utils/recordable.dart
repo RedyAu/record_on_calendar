@@ -19,7 +19,7 @@ class Recordable {
   String title;
   String description;
 
-  Recordable(this.uid, this.start, this.end, this.title, this.description);
+  Recordable(this.uid, this.start, this.end, this.title, this.description, [this.recorderProcess]);
 
   Process? recorderProcess;
   File? audioFile;

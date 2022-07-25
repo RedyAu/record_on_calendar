@@ -49,11 +49,16 @@ Future updateICal() async {
       }
 
       var event = Recordable(
-          vEvent["uid"],
-          DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt).toLocal(),
-          DateTime.parse((vEvent["dtend"] as IcsDateTime).dt).toLocal(),
-          vEvent["summary"],
-          vEvent["description"] ?? "");
+        vEvent["uid"],
+        DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt).toLocal(),
+        DateTime.parse((vEvent["dtend"] as IcsDateTime).dt).toLocal(),
+        vEvent["summary"],
+        vEvent["description"] ?? "",
+      );
+      event.recorderProcess = events.contains(event)
+          ? events.firstWhere((element) => element == event).recorderProcess
+          : null;
+
       if (matchEventName.hasMatch(event.title + event.description)) {
         _events.add(event);
       }
