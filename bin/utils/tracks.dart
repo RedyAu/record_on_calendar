@@ -46,11 +46,6 @@ $name:
 
 List<AudioDevice> devicesToRecord = [];
 
-void main() async {
-  //TODO removeme
-  updateDevices();
-}
-
 String generateTracksYaml(Iterable<AudioDevice> devices) {
   return ("""
 # DEVICES - TRACKS
@@ -72,7 +67,7 @@ String generateTracksYaml(Iterable<AudioDevice> devices) {
 }
 
 void updateDevices() {
-  logger.print("Updating multitrack config and devices...");
+  logger.print("  Updating multitrack config and devices...");
 
   tracksFile.createSync();
   String tracksFileContent = tracksFile.readAsStringSync();
@@ -127,9 +122,9 @@ void updateDevices() {
       .toList();
 
   logger.print("""
-  Devices that will be recorded: $devicesToRecord
-  Devices marked for recording but not present: $devicesEnabledNotPresent
-  New devices you should configure: $devicesToConfigure""");
+    Devices that will be recorded: $devicesToRecord
+    Devices marked for recording but not present: $devicesEnabledNotPresent
+    New devices you should configure: $devicesToConfigure""");
 
   tracksFile.writeAsStringSync(generateTracksYaml(allDevices.where((element) =>
       !(!devicesEnabled.contains(element) &&
@@ -143,8 +138,8 @@ void updateDevices() {
 }
 
 List<AudioDevice> getPresentDevices() {
-  String ffpmegOutput = Process.runSync(
-          'ffmpeg', ['-list_devices', 'true', '-f', 'dshow', '-i', 'dummy'],
+  String ffpmegOutput = Process.runSync(ffmpegExe.path,
+          ['-list_devices', 'true', '-f', 'dshow', '-i', 'dummy'],
           stderrEncoding: Encoding.getByName('utf-8'))
       .stderr;
 

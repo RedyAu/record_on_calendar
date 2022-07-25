@@ -75,8 +75,8 @@ class Recordable {
 
   bool shouldStartRecord() {
     RecordingStatus status = getStatus();
-    return (status != RecordingStatus.successful) ||
-        (status == RecordingStatus.started && recorderProcess == null);
+    return !((status == RecordingStatus.successful) ||
+        (status == RecordingStatus.started && recorderProcess != null));
   }
 
   //! Overrides and fields

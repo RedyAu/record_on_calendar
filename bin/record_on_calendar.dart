@@ -78,7 +78,7 @@ void main() async {
       if (current != null && current.shouldStartRecord()) {
         currentStatus.update(AppStatus.recording, current);
         logger.print(
-            "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current\n\n");
+            "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current");
 
         await current.startRecord();
       }
@@ -105,7 +105,7 @@ setup() async {
 
   loadConfig();
 
-  if (!soxExe.existsSync()) {
+  if (!ffmpegExe.existsSync()) {
     await getRuntime();
   }
 

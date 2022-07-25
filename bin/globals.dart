@@ -13,10 +13,10 @@ final String ps = Platform.pathSeparator;
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File('${homeDir.path}${ps}config.yaml');
 final File tracksFile = File('${homeDir.path}${ps}tracks.yaml');
-final Directory soxDir = Directory('${homeDir.path}${ps}sox');
-final Directory soxVersionDir = Directory('${soxDir.path}${ps}sox-14.4.1');
-final File soxExe = File('${soxVersionDir.path}${ps}sox.exe');
-final File ffmpegExe = File('');//TODO populate
+final Directory ffmpegDir = Directory('${homeDir.path}${ps}ffmpeg');
+final Directory ffmpegVersionDir =
+    Directory('${ffmpegDir.path}${ps}ffmpeg-5.1-essentials_build${ps}bin');
+final File ffmpegExe = File('${ffmpegVersionDir.path}${ps}ffmpeg.exe');
 final File recordedListFile = File('${homeDir.path}${ps}recorded.dat');
 final Directory recordingsDir = Directory('${homeDir.path}${ps}recordings');
 final File historyFile = File(homeDir.path + ps + "history.json");
