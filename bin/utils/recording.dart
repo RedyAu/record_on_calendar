@@ -21,7 +21,7 @@ deleteFilesOverKeepLimit() async {
       for (var entity in entities) {
         logger.print("    Deleting item: ${entity.path}");
         try {
-          entity.delete(recursive: true);
+          entity.deleteSync(recursive: true);
         } catch (e, s) {
           logger.print('Error while deleting file $entity: $e\n$s');
         }
