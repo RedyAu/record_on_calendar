@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'utils/recordable.dart';
 import 'utils/history.dart';
 
-final String version = "3.0.0";
+final String version = "3.0.1";
 
 final String ps = Platform.pathSeparator;
 
