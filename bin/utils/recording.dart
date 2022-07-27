@@ -11,18 +11,24 @@ deleteFilesOverKeepLimit() async {
   if (keepRecordings == 0) return;
 
   logger.print("  Deleting files over keep limit...");
+  try {
+    List<FileSystemEntity> entities = recordingsDir.listSync().toList();
+    entities.sort(
+        (a, b) => b.tryLastModifiedSync().compareTo(a.tryLastModifiedSync()));
+    if (entities.length > keepRecordings) {
+      entities = entities.toList().sublist(keepRecordings);
 
-  List<FileSystemEntity> entities = recordingsDir.listSync().toList();
-  entities.sort(
-      (a, b) => b.tryLastModifiedSync().compareTo(a.tryLastModifiedSync()));
-  if (entities.length > keepRecordings) {
-    entities = entities.toList().sublist(keepRecordings);
-
-    for (var entity in entities) {
-      logger.print("    Deleting item: ${entity.path}");
-
-      entity.delete(recursive: true);
+      for (var entity in entities) {
+        logger.print("    Deleting item: ${entity.path}");
+        try {
+          entity.delete(recursive: true);
+        } catch (e, s) {
+          logger.print('Error while deleting file $entity: $e\n$s');
+        }
+      }
     }
+  } catch (e, s) {
+    logger.print('Error while deleting files: $e\n$s');
   }
   return;
 }
@@ -31,7 +37,8 @@ Future<Process> startRecordWithName(String recordingTitle) async {
   deleteFilesOverKeepLimit();
   updateDevices();
 
-  Directory currentDir = Directory(recordingsDir.path + ps + recordingTitle);
+  Directory currentDir = Directory(
+      recordingsDir.path + ps + recordingTitle.getSanitizedForFilename());
   currentDir.createSync(recursive: true);
 
   var process = await Process.start(
@@ -50,7 +57,8 @@ Future<Process> startRecordWithName(String recordingTitle) async {
               ])
           .reduce((value, element) => value.followedBy(element).toList()),
       //runInShell: true,
-      workingDirectory: currentDir.path);
+      workingDirectory: currentDir.path,
+      mode: ProcessStartMode.inheritStdio); //TODO removeme
 
   await Future.delayed(Duration(milliseconds: 300));
   return process;
