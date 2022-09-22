@@ -5,35 +5,32 @@ import '../globals.dart';
 import 'dart:io';
 import 'dart:cli';
 
+import 'package:path/path.dart' as p;
+
 Logger logger = Logger();
 
+/*
 main() {
-  logger.print("halo");
-  logger.print("halloooo");
+  logger.log("halo");
+  logger.log("halloooo");
+  exit(0);
 }
-
+*/
 class Logger {
   late File logFile;
 
   Logger() {
     logFile =
-        File(logDir.path + ps + DateTime.now().toFormattedString() + ".log");
+        File(p.join(logDir.path, DateTime.now().toFormattedString() + '.log'));
   }
 
-  String print(Object? object) {
-    String line = "$object"; //copied from dart api
-    _printToConsole(line);
+  String log(Object? object) {
+    final String line = '$object'; //only do conversion once
+    print(line);
 
     logFile.createSync(recursive: true);
-    var f = logFile.openWrite(mode: FileMode.writeOnlyAppend);
-    f.writeln(line);
-
-    // HACK | deprecated, needed to replace print()
-    waitFor(f.flush());
-    waitFor(f.close());
+    logFile.writeAsStringSync('$line\n', mode: FileMode.writeOnlyAppend);
 
     return line;
   }
 }
-
-_printToConsole(Object? object) => print(object); //HACK
