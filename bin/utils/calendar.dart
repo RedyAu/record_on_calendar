@@ -25,7 +25,7 @@ List<Recordable> getCurrents() {
 
 Future updateICal() async {
   //log.print("\n\n\n\n${DateTime.now().getFormattedString()} | Updating Calendar");
-  logger.print("\n${DateTime.now().toFormattedString()} | Updating Calendar");
+  logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
   int nextEventsHash = events.reversed
       .where((element) => element.start.isAfter(DateTime.now()))
@@ -72,9 +72,9 @@ Future updateICal() async {
 
     events = _events;
 
-    logger.print("Got ${events.length} events marked for recording.");
+    logger.log("Got ${events.length} events marked for recording.");
   } catch (e, stack) {
-    logger.print(
+    logger.log(
         "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$stack");
   }
 

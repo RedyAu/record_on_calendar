@@ -19,7 +19,8 @@ class Recordable {
   String title;
   String description;
 
-  Recordable(this.uid, this.start, this.end, this.title, this.description, [this.recorderProcess]);
+  Recordable(this.uid, this.start, this.end, this.title, this.description,
+      [this.recorderProcess]);
 
   Process? recorderProcess;
   File? audioFile;
@@ -27,6 +28,7 @@ class Recordable {
   //! Recording
 
   ///Returns Process from recording SoX process.
+  /*
   startRecord() async {
     saveStatus(RecordingStatus.started);
     String name = '${start.toFormattedString()} - $title';
@@ -34,8 +36,8 @@ class Recordable {
     audioFile =
         File(recordingsDir.path + ps + "$name.mp3".getSanitizedForFilename());
     logger.print("  Started process with PID ${recorderProcess!.pid}");
-  }
-
+  }*/
+/*
   Future<bool> stopRecord() async {
     if (recorderProcess == null) {
       logger.print(
@@ -52,10 +54,10 @@ class Recordable {
       //await Future.delayed(Duration(milliseconds: 300)); //TODO why was this needed
       return true;
     }
-  }
+  }*/
 
   //! Status
-
+/*
   bool saveStatus(RecordingStatus status) {
     Map<String, dynamic> data = history();
 
@@ -64,7 +66,8 @@ class Recordable {
 
     return true;
   }
-
+*/
+/*
   RecordingStatus getStatus() {
     if (!historyFile.existsSync()) return RecordingStatus.noData;
 
@@ -72,18 +75,20 @@ class Recordable {
       history()[uid] ?? "noData",
     );
   }
-
+*/
+/*
   bool shouldStartRecord() {
     RecordingStatus status = getStatus();
     return !((status == RecordingStatus.successful) ||
         (status == RecordingStatus.started && recorderProcess != null));
   }
+  */
 
   //! Overrides and fields
 
   @override
   int get hashCode => uid.hashCode;
-
+/*
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -91,7 +96,7 @@ class Recordable {
     bool result = other is Recordable && other.start == start;
     return result;
   }
-
+*/
   @override
   String toString() => "${start.toFormattedString()} | $title";
 

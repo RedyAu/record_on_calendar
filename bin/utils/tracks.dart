@@ -66,7 +66,7 @@ String generateTracksYaml(Iterable<AudioDevice> devices) {
 }
 
 void updateDevices() {
-  logger.print("  Updating multitrack config and devices...");
+  logger.log("  Updating multitrack config and devices...");
 
   tracksFile.createSync();
   String tracksFileContent = tracksFile.readAsStringSync();
@@ -120,7 +120,7 @@ void updateDevices() {
       )
       .toList();
 
-  logger.print("""
+  logger.log("""
     Devices that will be recorded: $devicesToRecord
     Devices marked for recording but not present: $devicesEnabledNotPresent
     New devices you should configure: $devicesToConfigure""");
@@ -131,8 +131,8 @@ void updateDevices() {
           !devicesPresent.contains(element)))));
 
   if (devicesToRecord.isEmpty) {
-    logger
-        .print('\nERROR! You have no devices enabled. Please edit tracks.yaml and run again.');
+    logger.log(
+        '\nERROR! You have no devices enabled. Please edit tracks.yaml and run again.');
   }
 }
 
@@ -164,8 +164,7 @@ List<AudioDevice> getPresentDevices() {
           RegExp(r'(?<=").*(?=")').firstMatch(allLines[i + 1])!.group(0)!,
           RegExp(r'(?<=").*(?=")').firstMatch(allLines[i])!.group(0)!));
     } catch (e, s) {
-      logger
-          .print("Error occured while getting an audio device from OS: $e\n$s");
+      logger.log("Error occured while getting an audio device from OS: $e\n$s");
     }
   }
   return _inputs;

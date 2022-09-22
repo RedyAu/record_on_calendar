@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:archive/archive_io.dart';
+import 'package:path/path.dart' as p;
 
 import '../globals.dart';
 import 'log.dart';
@@ -10,7 +11,7 @@ import 'tracks.dart';
 deleteFilesOverKeepLimit() async {
   if (keepRecordings == 0) return;
 
-  logger.print("  Deleting files over keep limit...");
+  logger.log("  Deleting files over keep limit...");
   try {
     List<FileSystemEntity> entities = recordingsDir.listSync().toList();
     entities.sort(
@@ -19,16 +20,16 @@ deleteFilesOverKeepLimit() async {
       entities = entities.toList().sublist(keepRecordings);
 
       for (var entity in entities) {
-        logger.print("    Deleting item: ${entity.path}");
+        logger.log("    Deleting item: ${entity.path}");
         try {
           entity.deleteSync(recursive: true);
         } catch (e, s) {
-          logger.print('Error while deleting file $entity: $e\n$s');
+          logger.log('Error while deleting file $entity: $e\n$s');
         }
       }
     }
   } catch (e, s) {
-    logger.print('Error while deleting files: $e\n$s');
+    logger.log('Error while deleting files: $e\n$s');
   }
   return;
 }
@@ -37,8 +38,10 @@ Future<Process> startRecordWithName(String recordingTitle) async {
   deleteFilesOverKeepLimit();
   updateDevices();
 
-  Directory currentDir = Directory(
-      recordingsDir.path + ps + recordingTitle.getSanitizedForFilename());
+  Directory currentDir = Directory(p.join(
+    recordingsDir.path,
+    recordingTitle.getSanitizedForFilename(),
+  ));
   currentDir.createSync(recursive: true);
 
   var process = await Process.start(
@@ -67,21 +70,21 @@ Future<Process> startRecordWithName(String recordingTitle) async {
 Future getRuntime() async {
   if (ffmpegDir.existsSync()) ffmpegDir.deleteSync(recursive: true);
 
-  logger.print(
+  logger.log(
       'Downloading and unzipping ffmpeg media library. This will take a while.');
 
   await get(Uri.parse(
           "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"))
       .then((resp) {
-    File zipFile = File('${ffmpegDir.path}${ps}ffmpeg.zip');
+    File zipFile = File(p.join(ffmpegDir.path, 'ffmpeg.zip'));
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);
 
-    logger.print("  Done downloading. Starting extracting.");
+    logger.log("  Done downloading. Starting extracting.");
 
     ffmpegDir.createSync(recursive: true);
-    extractFileToDisk('${ffmpegDir.path}${ps}ffmpeg.zip', ffmpegDir.path);
+    extractFileToDisk(p.join(ffmpegDir.path, 'ffmpeg.zip'), ffmpegDir.path);
 
-    logger.print("  Done extracting.");
+    logger.log("  Done extracting.");
   });
 }
