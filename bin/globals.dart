@@ -1,4 +1,4 @@
-//import 'dart:convert';
+import 'package:path/path.dart' as p;
 import 'dart:io';
 
 import 'package:intl/intl.dart';
@@ -8,19 +8,19 @@ import 'utils/history.dart';
 
 final String version = "3.0.1";
 
-final String ps = Platform.pathSeparator;
-
 final Directory homeDir = Directory('RecordOnCalendar');
-final File configFile = File('${homeDir.path}${ps}config.yaml');
-final File tracksFile = File('${homeDir.path}${ps}tracks.yaml');
-final Directory ffmpegDir = Directory('${homeDir.path}${ps}ffmpeg');
-final Directory ffmpegVersionDir =
-    Directory('${ffmpegDir.path}${ps}ffmpeg-5.1-essentials_build${ps}bin');
-final File ffmpegExe = File('${ffmpegVersionDir.path}${ps}ffmpeg.exe');
-final File recordedListFile = File('${homeDir.path}${ps}recorded.dat');
-final Directory recordingsDir = Directory('${homeDir.path}${ps}recordings');
-final File historyFile = File(homeDir.path + ps + "history.json");
-final Directory logDir = Directory(homeDir.path + ps + 'logs');
+final File configFile = File(p.join(homeDir.path, 'config.yaml'));
+final File tracksFile = File(p.join(homeDir.path, 'tracks.yaml'));
+final Directory ffmpegDir = Directory(p.join(homeDir.path, 'ffmpeg'));
+final Directory ffmpegVersionDir = Directory(p.join(
+  ffmpegDir.path,
+  'ffmpeg-5.1-essentials_build',
+  'bin',
+));
+final File ffmpegExe = File(p.join(ffmpegVersionDir.path, 'ffmpeg.exe'));
+final Directory recordingsDir = Directory(p.join(homeDir.path, 'recordings'));
+final File historyFile = File(p.join(homeDir.path, 'history.json'));
+final Directory logDir = Directory(p.join(homeDir.path, 'logs'));
 
 int startEarlierByMinutes = 5;
 int endLaterByMinutes = 30;
