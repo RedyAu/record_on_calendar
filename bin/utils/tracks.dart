@@ -7,39 +7,44 @@ import '../globals.dart';
 import 'log.dart';
 
 class AudioDevice {
-  String id;
+  String? id;
   String name;
-  String? _fileName;
-  String get fileName => (_fileName ?? name).getSanitizedForFilename();
+  String? customName;
+  String get fileName => (customName ?? name).getSanitizedForFilename();
   bool enabled = false;
 
-  String toString() => "${(_fileName == null) ? "" : "$_fileName: "}$name";
+  String toString() => "${(customName == null) ? "" : "$customName: "}$name";
 
   String toYamlSnippet() => """
 $name:
-  fileName: ${_fileName ?? '~'}
+  fileName: ${customName ?? '~'}
   record: $enabled
-  id: '$id'
+  id: $id
 """;
 
   factory AudioDevice.fromJson(String name, Map json) {
     try {
-      return AudioDevice(json['id'], name, json['fileName'], json['record']);
+      return AudioDevice(
+        name,
+        customName: json['fileName'],
+        enabled: json['record'],
+        id: json['id'],
+      );
     } catch (e, s) {
       throw "Couldn't read properties of audio device $name!\nError: $e\nPlease check the tracks.yaml file\n$s";
     }
   }
 
-  AudioDevice(this.id, this.name, [this._fileName, this.enabled = false]);
+  AudioDevice(this.name, {this.customName, this.enabled = false, this.id});
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => name.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    return other is AudioDevice && other.id == id;
+    return other is AudioDevice && other.name == name;
   }
 }
 
@@ -96,7 +101,6 @@ void updateDevices() {
       .where((element) => !devicesInFile.contains(element))
       .followedBy(devicesInFile)
       .toList();
-  ;
 
   devicesToRecord.clear();
   devicesToRecord.addAll(allDevices.where((element) =>
@@ -160,9 +164,12 @@ List<AudioDevice> getPresentDevices() {
   for (var i in deviceLines) {
     //There must be a simpler way of doing this xd
     try {
-      _inputs.add(AudioDevice(
-          RegExp(r'(?<=").*(?=")').firstMatch(allLines[i + 1])!.group(0)!,
-          RegExp(r'(?<=").*(?=")').firstMatch(allLines[i])!.group(0)!));
+      _inputs.add(
+        AudioDevice(
+          RegExp(r'(?<=").*(?=")').firstMatch(allLines[i])!.group(0)!,
+          id: RegExp(r'(?<=").*(?=")').firstMatch(allLines[i + 1])!.group(0)!,
+        ),
+      );
     } catch (e, s) {
       logger.log("Error occured while getting an audio device from OS: $e\n$s");
     }
