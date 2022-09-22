@@ -7,7 +7,7 @@ import 'utils/recordable.dart';
 import 'utils/history.dart';
 
 //TODO changeme
-final String version = "3.0.1";
+final String version = "4.0.0";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
