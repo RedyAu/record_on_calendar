@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'utils/app_status.dart';
-import 'utils/recordable.dart';
+import 'utils/event.dart';
 import 'globals.dart';
 import 'utils/config.dart';
 import 'utils/calendar.dart';
+import 'utils/history.dart';
 import 'utils/log.dart';
 import 'utils/email.dart';
 import 'utils/recording.dart';
@@ -31,8 +32,52 @@ void main() async {
     currentStatus.printStatus();
   });
 
+  Event? last;
+  Process? process;
+
   //! Recording
-  try {} catch (e, s) {
+  try {
+    //? Update current
+    Event? current;
+    try {
+      current = events.firstWhere((element) =>
+          element.startWithOffset().isBefore(DateTime.now()) &&
+          element.endWithOffset().isAfter(DateTime.now()));
+    } catch (_) {
+      current = null;
+    }
+
+    if (last != current) {
+      //? If recording is running, stop it (from last event)
+      if (process != null) {
+        logger.log(
+            "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $last\n\n");
+        bool successful = await process.kill();
+        saveStatusFor(
+          last!, //! If this is null, a serious mistake was made (last event can't be null if there is a process recording it. Was it not stopped or the process variable not updated?)
+          successful ? EventStatus.successful : EventStatus.failed,
+        );
+        checkAndSendDailyEmail();
+        currentStatus.update(AppStatus.idle, null);
+      }
+
+      //? Start recording for the current event, if there is one
+      if (current != null) {
+        logger.log(
+            "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current");
+        saveStatusFor(current, EventStatus.started); //At least we tried.
+        try {
+          process = await startRecordWithName(current.fileName);
+        } catch (_) {
+          saveStatusFor(current, EventStatus.failed);
+          rethrow;
+        }
+        currentStatus.update(AppStatus.recording, current);
+      }
+    }
+
+    last = current;
+  } catch (e, s) {
     logger.log('An exception occured in the main loop: $e\n$s');
   }
 }

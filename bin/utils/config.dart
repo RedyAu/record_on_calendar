@@ -6,9 +6,8 @@ import '../globals.dart';
 import 'log.dart';
 import 'package:path/path.dart';
 
-import 'tracks.dart';
-
 String generateConfigText({
+  bool debug = false,
   String link = "= PLEASE PUT AN ICAL LINK HERE =",
   int frequency = 30,
   int earlier = 5,
@@ -42,6 +41,7 @@ version: $version # Don't change this!
 
 # Config file format is YAML. The RecOnCal will try to migrate it to new versions if updated.
 # Made by Benedek Fodor in 2022
+debug: $debug
 
 ##########
 
@@ -135,6 +135,7 @@ loadConfig() {
 
     configFile.writeAsStringSync(
       generateConfigText(
+        debug: config['debug'],
         link: config['link'],
         frequency: config['frequency'],
         earlier: config['earlier'],
@@ -163,11 +164,12 @@ loadConfig() {
 
   //! Load
   try {
+    debug = config['debug'];
     iCalUri = Uri.parse(config['link']!);
     iCalUpdateFrequencyMinutes = config['frequency'];
     startEarlierByMinutes = config['earlier'];
     endLaterByMinutes = config['later'];
-    matchEventName = RegExp(config['regex']!);
+    eventSelectedForRecordMatcher = RegExp(config['regex']!);
     keepRecordings = config['keep'];
     dailyEmail = config['dailyEmail'] ?? false;
     dailyEmailRecipients =

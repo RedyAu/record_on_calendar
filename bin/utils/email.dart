@@ -1,12 +1,15 @@
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
-import 'recordable.dart';
+import 'calendar.dart';
+import 'event.dart';
 import 'history.dart';
 import '../globals.dart';
 import 'log.dart';
 
-sendDailyEmail() async {
+checkAndSendDailyEmail() async {
+  if (getNext(today: true) != null) return;
+
   if (smtpHost == null || !dailyEmail) {
     logger.log("\nEmail disabled, skipping sending daily email.");
     return;
@@ -61,11 +64,11 @@ String renderEmailContent(String template) {
           (element) => element.start.isSameDate(DateTime.now()),
         )
         .map(
-          (e) => "$e\n  ${e.getStatus().name}",
+          (e) => "$e\n  ${getStatusFor(e).name}",
         )
         .join("\n"),
   );
-  List<Recordable> futureEvents = events.reversed
+  List<Event> futureEvents = events.reversed
       .where(
         (element) => element.start.isAfter(DateTime.now()),
       )
@@ -88,14 +91,14 @@ String renderEmailContent(String template) {
       '[stat - success count]',
       history()
           .values
-          .where((element) => element == RecordingStatus.successful.name)
+          .where((element) => element == EventStatus.successful.name)
           .length
           .toString());
   template = template.replaceFirst(
       '[stat - failed count]',
       history()
           .values
-          .where((element) => !(element == RecordingStatus.successful.name))
+          .where((element) => !(element == EventStatus.successful.name))
           .length
           .toString());
 

@@ -3,7 +3,6 @@
 import '../globals.dart';
 
 import 'dart:io';
-import 'dart:cli';
 
 import 'package:path/path.dart' as p;
 

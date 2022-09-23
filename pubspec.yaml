@@ -13,4 +13,5 @@ dependencies:
   http: ^0.13.4
   icalendar_parser: ^1.0.1
   mailer: ^5.1.0
+  rrule: ^0.2.10
   yaml: ^3.1.1

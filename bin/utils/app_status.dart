@@ -1,17 +1,16 @@
 import '../globals.dart';
-import 'recordable.dart';
+import 'event.dart';
 import 'calendar.dart';
 
 enum AppStatus { idle, recording }
 
 class CurrentStatus {
   AppStatus _currentStatus = AppStatus.idle;
-  Recordable? _current;
+  Event? _current;
 
-  void update(AppStatus newStatus, Recordable current) {
+  void update(AppStatus newStatus, Event? current) {
     _currentStatus = newStatus;
     _current = current;
-    printStatus();
   }
 
   AppStatus get currentStatus => _currentStatus;
@@ -21,7 +20,7 @@ class CurrentStatus {
     i++;
     if (i > 3) i = 0;
 
-    Recordable? _next = getNext();
+    Event? _next = getNext();
     switch (_currentStatus) {
       case AppStatus.idle:
         print("""

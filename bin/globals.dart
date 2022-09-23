@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:intl/intl.dart';
 
-import 'utils/recordable.dart';
+import 'utils/event.dart';
 import 'utils/history.dart';
 
 //TODO changeme
@@ -23,10 +23,11 @@ final Directory recordingsDir = Directory(p.join(homeDir.path, 'recordings'));
 final File historyFile = File(p.join(homeDir.path, 'history.json'));
 final Directory logDir = Directory(p.join(homeDir.path, 'logs'));
 
+bool debug = false;
 int startEarlierByMinutes = 5;
 int endLaterByMinutes = 30;
 int keepRecordings = 0;
-RegExp matchEventName = RegExp(r".");
+RegExp eventSelectedForRecordMatcher = RegExp(r".");
 Uri iCalUri = Uri();
 int iCalUpdateFrequencyMinutes = 30;
 
@@ -47,7 +48,7 @@ String calendarEmailSenderName = "";
 String calendarEmailSubject = "";
 String calendarEmailContent = "";
 
-List<Recordable> events = [];
+List<Event> events = [];
 
 HistoryData historyDataInstance = HistoryData();
 

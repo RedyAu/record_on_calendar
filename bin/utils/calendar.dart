@@ -2,39 +2,35 @@ import 'package:http/http.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 import 'package:rrule/rrule.dart';
 
-//import 'email.dart';
+import 'email.dart';
 import 'event.dart';
 import '../globals.dart';
 import 'log.dart';
 
 /*
 void main() async {
-  //TODO comment me
   iCalUri = Uri.parse(
       "https://calendar.google.com/calendar/ical/a2i0nar8fvsu0a0n5preu9ifqk%40group.calendar.google.com/private-c686b4722edfbe1f093bfdc110b7e3a4/basic.ics");
   await updateICal();
   print("done");
 }
 */
-Event? getNext() {
+Event? getNext({bool today = false}) {
   try {
-    return events
-        .lastWhere((event) => event.startWithOffset().isAfter(DateTime.now()));
+    if (today) {
+      return events.firstWhere((event) =>
+          event.startWithOffset().isAfter(DateTime.now()) &&
+          event.start.isSameDate(DateTime.now()));
+    } else {
+      return events.firstWhere(
+          (event) => event.startWithOffset().isAfter(DateTime.now()));
+    }
   } catch (e) {
     return null;
   }
 }
 
-List<Event> getCurrents() {
-  return events
-      .where((event) =>
-          event.startWithOffset().isBefore(DateTime.now()) &&
-          event.endWithOffset().isAfter(DateTime.now()))
-      .toList();
-}
-
 Future updateICal() async {
-  //log.print("\n\n\n\n${DateTime.now().getFormattedString()} | Updating Calendar");
   logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
   int nextEventsHash = events.reversed
@@ -67,6 +63,7 @@ Future updateICal() async {
       String description = vEvent["description"] ?? "";
 
       if (eventSelectedForRecordMatcher.hasMatch(summary + description)) {
+        //? Add single event when no RRULE is set
         if (rrule == null) {
           _eventsFromEntry.add(Event(uid, start, end, summary, description));
         } else {

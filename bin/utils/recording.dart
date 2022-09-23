@@ -44,27 +44,31 @@ Future<Process> startRecordWithName(String recordingTitle) async {
   ));
   currentDir.createSync(recursive: true);
 
-  var process = await Process.start(
-      ffmpegExe.path,
-      devicesToRecord
-          .asMap()
-          .entries
-          .map((e) => [
-                '-f',
-                'dshow',
-                '-i',
-                'audio=${e.value.id}',
-                '-map',
-                '${e.key}',
-                '${e.value.fileName}.mp3'
-              ])
-          .reduce((value, element) => value.followedBy(element).toList()),
-      //runInShell: true,
-      workingDirectory: currentDir.path,
-      mode: ProcessStartMode.inheritStdio); //TODO removeme
+  try {
+    var process = await Process.start(
+        ffmpegExe.path,
+        devicesToRecord
+            .asMap()
+            .entries
+            .map((e) => [
+                  '-f',
+                  'dshow',
+                  '-i',
+                  'audio=${e.value.id}',
+                  '-map',
+                  '${e.key}',
+                  '${e.value.fileName}.mp3'
+                ])
+            .reduce((value, element) => value.followedBy(element).toList()),
+        workingDirectory: currentDir.path,
+        mode: debug ? ProcessStartMode.inheritStdio : ProcessStartMode.normal);
 
-  await Future.delayed(Duration(milliseconds: 300));
-  return process;
+    await Future.delayed(Duration(milliseconds: 300));
+    return process;
+  } catch (_) {
+    logger.log("FATAL: Couldn't start recorder process!");
+    rethrow;
+  }
 }
 
 Future getRuntime() async {
