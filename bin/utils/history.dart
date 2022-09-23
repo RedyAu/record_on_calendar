@@ -1,6 +1,14 @@
 import 'dart:convert';
 
 import '../globals.dart';
+import 'event.dart';
+
+enum EventStatus {
+  started,
+  failed,
+  successful,
+  noData,
+}
 
 class HistoryData {
   Map<String, dynamic>? _historyData;
@@ -28,4 +36,18 @@ class HistoryData {
 }
 
 Map<String, dynamic> history() => historyDataInstance.getData();
-void saveData(Map<String, dynamic> data) => historyDataInstance.saveData(data);
+void replaceHistoryWith(Map<String, dynamic> data) =>
+    historyDataInstance.saveData(data);
+
+EventStatus getStatusFor(Event event) {
+  return EventStatus.values.byName(
+    history()['${event.hashCode}'] ?? 'noData',
+  );
+}
+
+void saveStatusFor(Event event, EventStatus status) {
+  var _history = history();
+  _history.update('${event.hashCode}', (_) => status.name,
+      ifAbsent: () => status.name);
+  replaceHistoryWith(_history);
+}
