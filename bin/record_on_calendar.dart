@@ -34,51 +34,70 @@ void main() async {
 
   Event? last;
   Process? process;
+  int exceptionLimiter = 0;
 
   //! Recording
-  try {
-    //? Update current
-    Event? current;
+  while (true) {
     try {
-      current = events.firstWhere((element) =>
-          element.startWithOffset().isBefore(DateTime.now()) &&
-          element.endWithOffset().isAfter(DateTime.now()));
-    } catch (_) {
-      current = null;
-    }
+      //? Update current
+      Event? current = getCurrentEvent();
 
-    if (last != current) {
-      //? If recording is running, stop it (from last event)
-      if (process != null) {
-        logger.log(
-            "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $last\n\n");
-        bool successful = await process.kill();
-        saveStatusFor(
-          last!, //! If this is null, a serious mistake was made (last event can't be null if there is a process recording it. Was it not stopped or the process variable not updated?)
-          successful ? EventStatus.successful : EventStatus.failed,
-        );
-        checkAndSendDailyEmail();
-        currentStatus.update(AppStatus.idle, null);
-      }
-
-      //? Start recording for the current event, if there is one
-      if (current != null) {
-        logger.log(
-            "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current");
-        saveStatusFor(current, EventStatus.started); //At least we tried.
-        try {
-          process = await startRecordWithName(current.fileName);
-        } catch (_) {
-          saveStatusFor(current, EventStatus.failed);
-          rethrow;
+      if (last != current) {
+        //? If recording is running, stop it (from last event)
+        if (process != null) {
+          logger.log(
+              "\n\n\n============================\n${DateTime.now().toFormattedString()} | ■ Stopping recording of $last");
+          bool? successful = await process?.kill();
+          saveStatusFor(
+            last!, //! If this is null, a serious mistake was made (last event can't be null if there is a process recording it. Was it not stopped or the process variable not updated?)
+            successful ?? false ? EventStatus.successful : EventStatus.failed,
+          );
+          logger.log("  Process ${process?.pid} stopped.");
+          checkAndSendDailyEmail();
+          currentStatus.update(AppStatus.idle);
         }
-        currentStatus.update(AppStatus.recording, current);
+
+        //? Start recording for the current event, if there is one
+        if (current != null) {
+          logger.log(
+              "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current");
+          saveStatusFor(current, EventStatus.started); //At least we tried.
+          try {
+            process = await startRecordWithName(current.fileName);
+            logger.log("  Started recording process ${process?.pid}.");
+            process!.exitCode.whenComplete(() => process = null);
+          } catch (_) {
+            saveStatusFor(current, EventStatus.failed);
+            rethrow;
+          }
+          currentStatus.update(AppStatus.recording);
+        }
+      }
+
+      last = current;
+
+      if (current != null) {
+        //? If current hasn't changed, and there is a current recording
+        if (process == null) {
+          logger.log(
+              '\nERROR: Currently a recording should be running, but no process is active!\nRestarting process...');
+          last = null;
+        }
+      }
+
+      exceptionLimiter = 0;
+
+      await Future.delayed(Duration(seconds: 1));
+    } catch (e, s) {
+      logger.log('An exception occured in the main loop: $e\n$s');
+      exceptionLimiter++;
+      if (exceptionLimiter > 3) {
+        logger.log(
+            '\n\n==========================\nERROR: Recurring exceptions in main loop!\nWaiting 1 minute, then retrying.');
+        Future.delayed(Duration(minutes: 1));
+        exceptionLimiter = 0;
       }
     }
-
-    last = current;
-  } catch (e, s) {
-    logger.log('An exception occured in the main loop: $e\n$s');
   }
 }
 
@@ -108,7 +127,7 @@ setup() async {
 
     recordingsDir.createSync();
   } catch (e, s) {
-    print(
+    logger.log(
         "Couldn't start the program. If the error persists, delete the RecordOnCalendar folder, and let the program re-generate everything.\nError: $e\n$s");
     stdin.readLineSync();
     exit(1);
