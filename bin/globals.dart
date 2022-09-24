@@ -100,5 +100,5 @@ extension EntityWithModifiedDate on FileSystemEntity {
 
 extension SanitizeForFilename on String {
   String getSanitizedForFilename() =>
-      this.replaceAll(RegExp(r'[<>:"/\\|?*őű]'), "_");
+      this.replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
 }
