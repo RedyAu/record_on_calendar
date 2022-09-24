@@ -75,7 +75,14 @@ Future updateICal() async {
       if (eventSelectedForRecordMatcher.hasMatch(summary + description)) {
         //? Add single event when no RRULE is set
         if (rrule == null) {
-          _eventsFromEntry.add(Event(uid, start, end, summary, description));
+          _eventsFromEntry.add(Event(
+            uid,
+            start,
+            end,
+            summary,
+            description,
+            rruleGenerated: false,
+          ));
         } else {
           Duration duration = end.difference(start);
 
@@ -88,8 +95,25 @@ Future updateICal() async {
               .map((e) => e.toLocal())
               .toList()) {
             DateTime generatedEnd = generatedStart.add(duration);
-            _eventsFromEntry.add(
-                Event(uid, generatedStart, generatedEnd, summary, description));
+            try {
+              if ((vEvent["exdate"] as List<IcsDateTime?>?)?.any((element) =>
+                      element?.toDateTime()?.isAtSameMomentAs(generatedStart) ??
+                      false) ??
+                  false)
+                continue; //If excluded date list is null, don't exclude event. If excluded date parse fails, don't exclude event.
+            } catch (e, s) {
+              logger.log(
+                  "WARNING: Error while parsing excluded date list for event. Skipping.\n$e\n$s");
+              continue;
+            }
+            _eventsFromEntry.add(Event(
+              uid,
+              generatedStart,
+              generatedEnd,
+              summary,
+              description,
+              rruleGenerated: true,
+            ));
           }
         }
       }
@@ -97,8 +121,11 @@ Future updateICal() async {
       _events.addAll(_eventsFromEntry);
     }
 
-    //Sort alphabetically then by start time
+    //Sort alphabetically, then by source, then by start time
     _events.sort((a, b) => a.title.compareTo(b.title));
+    _events.sort((a, b) => (a.rruleGenerated == b.rruleGenerated)
+        ? 0
+        : ((a.rruleGenerated && !b.rruleGenerated) ? 1 : -1));
     _events.sort((a, b) => a.start.compareTo(b.start));
 
     //Only keep one event of events starting at the same time, keep first one alphabetically
