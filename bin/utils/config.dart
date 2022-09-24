@@ -7,7 +7,7 @@ import 'log.dart';
 import 'package:path/path.dart';
 
 String generateConfigText({
-  bool debug = false,
+  bool? debug = false,
   String link = "= PLEASE PUT AN ICAL LINK HERE =",
   int frequency = 30,
   int earlier = 5,
@@ -41,7 +41,7 @@ version: $version # Don't change this!
 
 # Config file format is YAML. The RecOnCal will try to migrate it to new versions if updated.
 # Made by Benedek Fodor in 2022
-debug: $debug
+debug: ${debug ?? false}
 
 ##########
 
@@ -160,6 +160,10 @@ loadConfig() {
             (config['calendarEmailContent'] as String).replaceAll("\n", "\n  "),
       ),
     );
+    logger.log(
+        '\nMigrated config file from version ${config['version']} to $version.\nPlease check it and re-run the program.');
+    stdin.readLineSync();
+    exit(0);
   }
 
   //! Load
@@ -187,9 +191,9 @@ loadConfig() {
     calendarEmailSenderName = config['calendarEmailSenderName'];
     calendarEmailSubject = config['calendarEmailSubject'];
     calendarEmailContent = config['calendarEmailContent'];
-  } catch (e, stack) {
+  } catch (e, s) {
     logger.log(
-        "Could not get config values! If this error persists, please delete file and let the program regenerate it by restarting.\nAre you sure you supplied an iCal link?\n$e\n$stack");
+        "Could not get config values! If this error persists, please delete config.yaml and let the program regenerate it by restarting.\n\n  ####> Are you sure you supplied an iCal link? <####\n\n$e\n$s");
     stdin.readLineSync();
     exit(1);
   }
