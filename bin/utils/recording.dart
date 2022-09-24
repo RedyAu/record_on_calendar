@@ -17,7 +17,7 @@ deleteFilesOverKeepLimit() async {
     entities.sort(
         (a, b) => b.tryLastModifiedSync().compareTo(a.tryLastModifiedSync()));
     if (entities.length > keepRecordings) {
-      entities = entities.toList().sublist(keepRecordings);
+      entities = entities.sublist(keepRecordings);
 
       for (var entity in entities) {
         logger.log("    Deleting item: ${entity.path}");
@@ -42,7 +42,15 @@ Future<Process> startRecordWithName(String recordingTitle) async {
     recordingsDir.path,
     recordingTitle.getSanitizedForFilename(),
   ));
-  currentDir.createSync(recursive: true);
+
+  if (currentDir.existsSync()) {
+    logger.log(
+        '\nWARNING: Recording already exists. Renaming existing recording.');
+    currentDir
+        .renameSync(currentDir.path + '_' + DateTime.now().toFormattedString());
+  } else {
+    currentDir.createSync(recursive: true);
+  }
 
   try {
     var process = await Process.start(

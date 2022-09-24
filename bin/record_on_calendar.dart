@@ -94,7 +94,7 @@ void main() async {
       if (exceptionLimiter > 3) {
         logger.log(
             '\n\n==========================\nERROR: Recurring exceptions in main loop!\nWaiting 1 minute, then retrying.');
-        Future.delayed(Duration(minutes: 1));
+        await Future.delayed(Duration(minutes: 1));
         exceptionLimiter = 0;
       }
     }
