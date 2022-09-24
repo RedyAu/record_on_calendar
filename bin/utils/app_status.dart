@@ -8,19 +8,20 @@ class CurrentStatus {
   AppStatus _currentStatus = AppStatus.idle;
   Event? _current;
 
-  void update(AppStatus newStatus, Event? current) {
+  void update(AppStatus newStatus) {
     _currentStatus = newStatus;
-    _current = current;
   }
 
   AppStatus get currentStatus => _currentStatus;
 
   int i = 0;
   void printStatus() async {
+    _current = getCurrentEvent();
+
     i++;
     if (i > 3) i = 0;
 
-    Event? _next = getNext();
+    Event? _next = getNextEvent();
     switch (_currentStatus) {
       case AppStatus.idle:
         print("""
