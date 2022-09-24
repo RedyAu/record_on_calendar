@@ -65,7 +65,7 @@ void main() async {
           try {
             process = await startRecordWithName(current.fileName);
             logger.log("  Started recording process ${process?.pid}.");
-            process!.exitCode.whenComplete(() => process = null);
+            process?.exitCode.whenComplete(() => process = null);
           } catch (_) {
             saveStatusFor(current, EventStatus.failed);
             rethrow;
@@ -85,18 +85,11 @@ void main() async {
         }
       }
 
-      exceptionLimiter = 0;
-
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 3));
     } catch (e, s) {
-      logger.log('An exception occured in the main loop: $e\n$s');
-      exceptionLimiter++;
-      if (exceptionLimiter > 3) {
-        logger.log(
-            '\n\n==========================\nERROR: Recurring exceptions in main loop!\nWaiting 1 minute, then retrying.');
-        await Future.delayed(Duration(minutes: 1));
-        exceptionLimiter = 0;
-      }
+      logger.log(
+          'An exception occured in the main loop, waiting 5 seconds.\n$e\n$s');
+      await Future.delayed(Duration(seconds: 5));
     }
   }
 }

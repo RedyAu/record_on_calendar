@@ -24,17 +24,17 @@ deleteFilesOverKeepLimit() async {
         try {
           entity.deleteSync(recursive: true);
         } catch (e, s) {
-          logger.log('Error while deleting file $entity: $e\n$s');
+          logger.log('      Error while deleting file $entity: $e\n$s');
         }
       }
     }
   } catch (e, s) {
-    logger.log('Error while deleting files: $e\n$s');
+    logger.log('      Error while deleting files: $e\n$s');
   }
   return;
 }
 
-Future<Process> startRecordWithName(String recordingTitle) async {
+Future<Process?> startRecordWithName(String recordingTitle) async {
   deleteFilesOverKeepLimit();
   updateDevices();
 
@@ -43,13 +43,23 @@ Future<Process> startRecordWithName(String recordingTitle) async {
     recordingTitle.getSanitizedForFilename(),
   ));
 
-  if (currentDir.existsSync()) {
+  if (currentDir.existsSync() &&
+      currentDir.listSync(recursive: true).length > 1) {
     logger.log(
-        '\nWARNING: Recording already exists. Renaming existing recording.');
-    currentDir
-        .renameSync(currentDir.path + '_' + DateTime.now().toFormattedString());
-  } else {
-    currentDir.createSync(recursive: true);
+        '  WARNING: Recording already exists. Renaming existing recording.');
+    try {
+      currentDir.renameSync('${currentDir.path}_${DateTime.now().hashCode}');
+    } catch (e, s) {
+      logger.log(
+          '    Rename failed with error. Overwriting existing files instead.\n$e\n$s');
+    }
+  }
+  currentDir.createSync(recursive: true);
+
+  if (devicesToRecord.isEmpty) {
+    logger.log(
+        "  ERROR: No devices available or enabled to record. Couldn't start recording.");
+    return null;
   }
 
   try {
@@ -74,7 +84,7 @@ Future<Process> startRecordWithName(String recordingTitle) async {
     await Future.delayed(Duration(milliseconds: 300));
     return process;
   } catch (_) {
-    logger.log("FATAL: Couldn't start recorder process!");
+    logger.log("  ERROR: Couldn't start recorder process!");
     rethrow;
   }
 }

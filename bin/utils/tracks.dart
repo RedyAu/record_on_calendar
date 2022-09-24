@@ -168,7 +168,7 @@ List<AudioDevice> getPresentDevices() {
   List<AudioDevice> _inputs = [];
 
   for (var i in deviceLines) {
-    //There must be a simpler way of doing this xd
+    //There must be a simpler way of doing this...
     try {
       _inputs.add(
         AudioDevice(

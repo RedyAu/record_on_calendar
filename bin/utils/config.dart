@@ -41,7 +41,8 @@ version: $version # Don't change this!
 
 # Config file format is YAML. The RecOnCal will try to migrate it to new versions if updated.
 # Made by Benedek Fodor in 2022
-debug: ${debug ?? false}
+
+debug: ${debug ?? false} # Set to true to see additional messages on console.
 
 ##########
 
