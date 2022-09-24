@@ -96,7 +96,7 @@ Future getRuntime() async {
       'Downloading and unzipping ffmpeg media library. This will take a while.');
 
   await get(Uri.parse(
-          "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"))
+          "https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-5.0.1-essentials_build.zip"))
       .then((resp) {
     File zipFile = File(p.join(ffmpegDir.path, 'ffmpeg.zip'));
     zipFile.createSync(recursive: true);

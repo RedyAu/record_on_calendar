@@ -15,7 +15,7 @@ final File tracksFile = File(p.join(homeDir.path, 'tracks.yaml'));
 final Directory ffmpegDir = Directory(p.join(homeDir.path, 'ffmpeg'));
 final Directory ffmpegVersionDir = Directory(p.join(
   ffmpegDir.path,
-  'ffmpeg-5.1-essentials_build',
+  'ffmpeg-5.0.1-essentials_build',
   'bin',
 ));
 final File ffmpegExe = File(p.join(ffmpegVersionDir.path, 'ffmpeg.exe'));
