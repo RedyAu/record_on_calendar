@@ -7,7 +7,7 @@ import 'utils/event.dart';
 import 'utils/history.dart';
 
 //TODO changeme
-final String version = "4.0.0";
+final String version = "4.0.1";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
