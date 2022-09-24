@@ -19,7 +19,6 @@ class AudioDevice {
 $name:
   fileName: ${customName ?? '~'}
   record: $enabled
-  id: $id
 """;
 
   factory AudioDevice.fromJson(String name, Map json) {
@@ -28,7 +27,6 @@ $name:
         name,
         customName: json['fileName'],
         enabled: json['record'],
-        id: json['id'],
       );
     } catch (e, s) {
       throw "Couldn't read properties of audio device $name!\nError: $e\nPlease check the tracks.yaml file\n$s";
@@ -64,7 +62,6 @@ String generateTracksYaml(Iterable<AudioDevice> devices) {
 # Example Microphone 1:   # Human readable name of the input (this shows up in your OS; don't change)
 #   filename: John Guitar # You can specify a filename for this track. Leave on '~' to use the name of the device as track name.
 #   record: true          # Set to true to record
-#   id: 'xxxxxxxxxxxx'    # Used internally, don't change
 
 """ +
       devices.map((e) => e.toYamlSnippet()).join('\n'));
@@ -90,7 +87,7 @@ void updateDevices() {
         devicesInFile.add(AudioDevice.fromJson(key, value));
       });
     } catch (e, s) {
-      throw "Error while parsing audio devices in tracks.json: $e\n$s";
+      throw "Error while parsing an audio device in tracks.yaml: $e\n$s";
     }
   }
 
@@ -103,10 +100,19 @@ void updateDevices() {
       .toList();
 
   devicesToRecord.clear();
-  devicesToRecord.addAll(allDevices.where((element) =>
-      devicesEnabled.contains(element) &&
-      devicesInFile.contains(element) &&
-      devicesPresent.contains(element)));
+  devicesToRecord.addAll(
+    allDevices
+        .where((element) =>
+            devicesEnabled.contains(element) &&
+            devicesInFile.contains(element) &&
+            devicesPresent.contains(element))
+        .map((e) => AudioDevice(e.name,
+            customName: e.customName,
+            enabled: true,
+            id: devicesPresent //Use current ID for everything
+                .firstWhere((present) => present.name == e.name)
+                .id)),
+  );
 
   List<AudioDevice> devicesEnabledNotPresent = allDevices
       .where(
@@ -136,7 +142,9 @@ void updateDevices() {
 
   if (devicesToRecord.isEmpty) {
     logger.log(
-        '\nERROR! You have no devices enabled. Please edit tracks.yaml and run again.');
+        '\nERROR: You have no devices enabled. Please edit tracks.yaml and run again.');
+    stdin.readLineSync();
+    exit(1);
   }
 }
 
@@ -171,7 +179,7 @@ List<AudioDevice> getPresentDevices() {
         ),
       );
     } catch (e, s) {
-      logger.log("Error occured while getting an audio device from OS: $e\n$s");
+      logger.log("Error occured while parsing audio device list: $e\n$s");
     }
   }
   return _inputs;
