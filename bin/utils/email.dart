@@ -8,13 +8,13 @@ import '../globals.dart';
 import 'log.dart';
 
 checkAndSendDailyEmail() async {
-  if (getNext(today: true) != null) return;
+  if (getNextEvent(today: true) != null) return;
 
   if (smtpHost == null || !dailyEmail) {
-    logger.log("\nEmail disabled, skipping sending daily email.");
+    if (debug) logger.log("Email disabled, skipping sending daily email.");
     return;
   }
-  logger.log("\nSending daily email.");
+  logger.log("Sending daily email.");
 
   sendEmail(dailyEmailSenderName, dailyEmailRecipients, dailyEmailSubject,
       renderEmailContent(dailyEmailContent));
@@ -22,10 +22,11 @@ checkAndSendDailyEmail() async {
 
 sendCalendarEmail() async {
   if (smtpHost == null || !calendarEmail) {
-    logger.log("\nEmail disabled, skipping sending calendar update email.");
+    if (debug)
+      logger.log("Email disabled, skipping sending calendar update email.");
     return;
   }
-  logger.log("\nSending calendar update email.");
+  logger.log("Sending calendar update email.");
 
   sendEmail(calendarEmailSenderName, calendarEmailRecipients,
       calendarEmailSubject, renderEmailContent(calendarEmailContent));
@@ -68,7 +69,7 @@ String renderEmailContent(String template) {
         )
         .join("\n"),
   );
-  List<Event> futureEvents = events.reversed
+  List<Event> futureEvents = events
       .where(
         (element) => element.start.isAfter(DateTime.now()),
       )
