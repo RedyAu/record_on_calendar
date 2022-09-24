@@ -15,7 +15,7 @@ void main() async {
   print("done");
 }
 */
-Event? getNext({bool today = false}) {
+Event? getNextEvent({bool today = false}) {
   try {
     if (today) {
       return events.firstWhere((event) =>
@@ -26,6 +26,16 @@ Event? getNext({bool today = false}) {
           (event) => event.startWithOffset().isAfter(DateTime.now()));
     }
   } catch (e) {
+    return null;
+  }
+}
+
+Event? getCurrentEvent() {
+  try {
+    return events.lastWhere((element) =>
+        element.startWithOffset().isBefore(DateTime.now()) &&
+        element.endWithOffset().isAfter(DateTime.now()));
+  } catch (_) {
     return null;
   }
 }
