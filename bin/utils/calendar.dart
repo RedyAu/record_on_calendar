@@ -121,24 +121,17 @@ Future updateICal() async {
       _events.addAll(_eventsFromEntry);
     }
 
-    //Sort alphabetically, then by source, then by start time
+    _events.removeWhere((generatedEvent) => _events
+        .where((allEventsMember) => allEventsMember.rruleGenerated == false)
+        .any((notGeneratedEvent) =>
+            notGeneratedEvent.start.isAtSameMomentAs(generatedEvent.start) &&
+            generatedEvent.rruleGenerated == true));
+
     _events.sort((a, b) => a.title.compareTo(b.title));
-    _events.sort((a, b) => (a.rruleGenerated == b.rruleGenerated)
-        ? 0
-        : ((a.rruleGenerated && !b.rruleGenerated) ? 1 : -1));
     _events.sort((a, b) => a.start.compareTo(b.start));
 
-    //Only keep one event of events starting at the same time, keep first one alphabetically
-    _events.removeWhere((element) =>
-        (_events.where((e) => e.start.isAtSameMomentAs(element.start)).length >
-            1) &&
-        (_events
-                .where((e) => e.start.isAtSameMomentAs(element.start))
-                .toList()
-                .indexOf(element) !=
-            0));
-
-    events = _events;
+    events.clear();
+    events.addAll(_events);
 
     logger.log("Got ${events.length} events marked for recording.");
   } catch (e, stack) {
