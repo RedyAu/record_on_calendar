@@ -33,9 +33,9 @@ class Event {
   String toString() => "${start.toFormattedString()} | $title";
 
   ///Returns start time subtracted with global start earlier offset
-  DateTime startWithOffset() =>
+  DateTime get startWithOffset =>
       start.subtract(Duration(minutes: startEarlierByMinutes));
 
   ///Returns end time added with global end alter offset
-  DateTime endWithOffset() => end.add(Duration(minutes: endLaterByMinutes));
+  DateTime get endWithOffset => end.add(Duration(minutes: endLaterByMinutes));
 }

@@ -19,11 +19,11 @@ Event? getNextEvent({bool today = false}) {
   try {
     if (today) {
       return events.firstWhere((event) =>
-          event.startWithOffset().isAfter(DateTime.now()) &&
+          event.startWithOffset.isAfter(DateTime.now()) &&
           event.start.isSameDate(DateTime.now()));
     } else {
-      return events.firstWhere(
-          (event) => event.startWithOffset().isAfter(DateTime.now()));
+      return events
+          .firstWhere((event) => event.startWithOffset.isAfter(DateTime.now()));
     }
   } catch (e) {
     return null;
@@ -33,8 +33,8 @@ Event? getNextEvent({bool today = false}) {
 Event? getCurrentEvent() {
   try {
     return events.lastWhere((element) =>
-        element.startWithOffset().isBefore(DateTime.now()) &&
-        element.endWithOffset().isAfter(DateTime.now()));
+        element.startWithOffset.isBefore(DateTime.now()) &&
+        element.endWithOffset.isAfter(DateTime.now()));
   } catch (_) {
     return null;
   }
