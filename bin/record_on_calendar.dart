@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'utils/app_status.dart';
-import 'utils/event.dart';
 import 'globals.dart';
-import 'utils/config.dart';
+import 'utils/app_status.dart';
 import 'utils/calendar.dart';
+import 'utils/config.dart';
+import 'utils/email.dart';
+import 'utils/event.dart';
 import 'utils/history.dart';
 import 'utils/log.dart';
-import 'utils/email.dart';
 import 'utils/recording.dart';
 import 'utils/tracks.dart';
 

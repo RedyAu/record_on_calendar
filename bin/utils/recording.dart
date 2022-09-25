@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:http/http.dart';
 import 'package:archive/archive_io.dart';
+import 'package:http/http.dart';
 import 'package:path/path.dart' as p;
 
 import '../globals.dart';

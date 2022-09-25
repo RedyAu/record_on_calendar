@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
 import '../globals.dart';
 import 'log.dart';
-import 'package:path/path.dart';
 
 String generateConfigText({
   bool? debug = false,

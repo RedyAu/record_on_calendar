@@ -2,19 +2,11 @@ import 'package:http/http.dart';
 import 'package:icalendar_parser/icalendar_parser.dart';
 import 'package:rrule/rrule.dart';
 
+import '../globals.dart';
 import 'email.dart';
 import 'event.dart';
-import '../globals.dart';
 import 'log.dart';
 
-/*
-void main() async {
-  iCalUri = Uri.parse(
-      "https://calendar.google.com/calendar/ical/a2i0nar8fvsu0a0n5preu9ifqk%40group.calendar.google.com/private-c686b4722edfbe1f093bfdc110b7e3a4/basic.ics");
-  await updateICal();
-  print("done");
-}
-*/
 Event? getNextEvent({bool today = false}) {
   try {
     if (today) {

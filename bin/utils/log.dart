@@ -1,10 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
-import '../globals.dart';
-
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+
+import '../globals.dart';
 
 Logger logger = Logger();
 
