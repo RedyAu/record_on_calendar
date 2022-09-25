@@ -35,7 +35,7 @@ ${DateTime.now().toFormattedString()} | ZzZ Not recording.
           print("""
 
 ${DateTime.now().toFormattedString()} ${progressIndicator[i]} Recording $_current
-  Recording ends at: ${_current!.endWithOffset().toFormattedString()}
+  Recording ends at: ${_current!.endWithOffset.toFormattedString()}
   Next to record: ${_next ?? "No future events!"}
 """);
         } else {

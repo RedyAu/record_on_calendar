@@ -34,7 +34,6 @@ void main() async {
 
   Event? last;
   Process? process;
-  int exceptionLimiter = 0;
 
   //! Recording
   while (true) {
