@@ -1,7 +1,7 @@
 name: record_on_calendar
 description: Record multitrack audio automatically according to iCal calendar events.
 # Also change in utils/globals.dart
-version: 4.0.2
+version: 4.0.3
 
 environment:
   sdk: '>=2.16.1 <3.0.0'

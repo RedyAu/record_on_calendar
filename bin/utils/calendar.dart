@@ -35,8 +35,9 @@ Event? getCurrentEvent() {
 Future updateICal() async {
   logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
-  int nextEventsHash = events.reversed
+  int nextEventsHash = events
       .where((element) => element.start.isAfter(DateTime.now()))
+      .take(10)
       .join()
       .hashCode;
 
@@ -131,8 +132,9 @@ Future updateICal() async {
         "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$stack");
   }
 
-  int updatedNextEventsHash = events.reversed
+  int updatedNextEventsHash = events
       .where((element) => element.start.isAfter(DateTime.now()))
+      .take(10)
       .join()
       .hashCode;
 
