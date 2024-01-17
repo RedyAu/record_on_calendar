@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import '../globals.dart';
-import 'event.dart';
+import '../calendar/event.dart';
 
 enum EventStatus {
   started,

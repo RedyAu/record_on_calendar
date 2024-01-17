@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:yaml/yaml.dart';
 
 import '../globals.dart';
-import 'log.dart';
+import '../utils/log.dart';
 
 class AudioDevice {
   String? id;

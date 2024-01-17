@@ -2,9 +2,9 @@ import 'package:googleapis/calendar/v3.dart' as g;
 import 'package:googleapis_auth/googleapis_auth.dart';
 
 import '../globals.dart';
-import 'email.dart';
+import '../utils/email.dart';
 import 'event.dart';
-import 'log.dart';
+import '../utils/log.dart';
 
 Event? getNextEvent({bool today = false}) {
   try {

@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'globals.dart';
-import 'utils/app_status.dart';
-import 'utils/calendar.dart';
+import 'app_status.dart';
+import 'calendar/calendar.dart';
 import 'utils/config.dart';
 import 'utils/email.dart';
-import 'utils/event.dart';
-import 'utils/history.dart';
+import 'calendar/event.dart';
+import 'recording/history.dart';
 import 'utils/log.dart';
-import 'utils/recording.dart';
-import 'utils/tracks.dart';
+import 'recording/recording.dart';
+import 'recording/tracks.dart';
 
 import 'package:path/path.dart' as p;
 

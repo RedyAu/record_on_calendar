@@ -1,6 +1,6 @@
-import '../globals.dart';
-import 'calendar.dart';
-import 'event.dart';
+import 'globals.dart';
+import 'calendar/calendar.dart';
+import 'calendar/event.dart';
 
 enum AppStatus { idle, recording }
 

@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
-import 'utils/event.dart';
-import 'utils/history.dart';
+import 'calendar/event.dart';
+import 'recording/history.dart';
 
 //TODO changeme
 final String version = "4.1.0";

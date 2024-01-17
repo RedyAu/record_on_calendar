@@ -2,9 +2,9 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
 import '../globals.dart';
-import 'calendar.dart';
-import 'event.dart';
-import 'history.dart';
+import '../calendar/calendar.dart';
+import '../calendar/event.dart';
+import '../recording/history.dart';
 import 'log.dart';
 
 checkAndSendDailyEmail() async {
