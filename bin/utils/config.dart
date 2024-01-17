@@ -8,11 +8,12 @@ import 'log.dart';
 
 String generateConfigText({
   bool? debug = false,
-  String link = "= PLEASE PUT AN ICAL LINK HERE =",
-  int frequency = 30,
-  int earlier = 5,
-  int later = 30,
-  String regex = ".",
+  String? google_calendar_id = "= PLEASE PUT A GOOGLE CALENDAR ID HERE =",
+  String? google_api_key = "= PLEASE PUT A GOOGLE API KEY HERE =",
+  int? frequency = 30,
+  int? earlier = 5,
+  int? later = 30,
+  String? regex = ".",
   String? ftphost,
   String? username,
   String? password,
@@ -40,7 +41,7 @@ String generateConfigText({
 version: $version # Don't change this!
 
 # Config file format is YAML. The RecOnCal will try to migrate it to new versions if updated.
-# Made by Benedek Fodor in 2022
+# Made by Benedek Fodor (RedyAu) in 2022-2024
 
 debug: ${debug ?? false} # Set to true to see additional messages on console.
 
@@ -48,8 +49,11 @@ debug: ${debug ?? false} # Set to true to see additional messages on console.
 
 # CALENDAR
 
-# iCal link for calendar
-link: $link
+# ID of Google Calendar
+calendar_id: $google_calendar_id
+# API key for Google Calendar
+api_key: $google_api_key
+
 # Update frequency of calendar (minutes)
 frequency: $frequency
 # Start recording minutes earlier then calendar event start
@@ -137,7 +141,8 @@ loadConfig() {
     configFile.writeAsStringSync(
       generateConfigText(
         debug: config['debug'],
-        link: config['link'],
+        google_calendar_id: config['calendar_id'],
+        google_api_key: config['api_key'],
         frequency: config['frequency'],
         earlier: config['earlier'],
         later: config['later'],
@@ -170,7 +175,8 @@ loadConfig() {
   //! Load
   try {
     debug = config['debug'];
-    iCalUri = Uri.parse(config['link']!);
+    googleCalendarId = config['calendar_id']!;
+    googleApiKey = config['api_key']!;
     iCalUpdateFrequencyMinutes = config['frequency'];
     startEarlierByMinutes = config['earlier'];
     endLaterByMinutes = config['later'];
@@ -194,7 +200,7 @@ loadConfig() {
     calendarEmailContent = config['calendarEmailContent'];
   } catch (e, s) {
     logger.log(
-        "Could not get config values! If this error persists, please delete config.yaml and let the program regenerate it by restarting.\n\n  ####> Are you sure you supplied an iCal link? <####\n\n$e\n$s");
+        "Could not get config values! If this error persists, please delete config.yaml and let the program regenerate it by restarting.\n\n$e\n$s");
     stdin.readLineSync();
     exit(1);
   }

@@ -6,10 +6,8 @@ class Event {
   DateTime end;
   String title;
   String description;
-  bool rruleGenerated;
 
-  Event(this.uid, this.start, this.end, this.title, this.description,
-      {required bool this.rruleGenerated});
+  Event(this.uid, this.start, this.end, this.title, this.description);
 
   String get fileName =>
       '${start.toFormattedString()} - $title'.getSanitizedForFilename();

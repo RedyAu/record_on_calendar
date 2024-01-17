@@ -1,6 +1,5 @@
-import 'package:http/http.dart';
-import 'package:icalendar_parser/icalendar_parser.dart';
-import 'package:rrule/rrule.dart';
+import 'package:googleapis/calendar/v3.dart' as g;
+import 'package:googleapis_auth/googleapis_auth.dart';
 
 import '../globals.dart';
 import 'email.dart';
@@ -32,7 +31,7 @@ Event? getCurrentEvent() {
   }
 }
 
-Future updateICal() async {
+Future updateGoogleCalendar() async {
   logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
   int nextEventsHash = events
@@ -42,83 +41,36 @@ Future updateICal() async {
       .hashCode;
 
   try {
-    var req = await get(iCalUri).timeout(Duration(seconds: 30));
-    String iCalString = req.body;
-
     List<Event> _events = [];
 
-    ICalendar iCalendar = ICalendar.fromString(iCalString);
+    g.CalendarApi calendar = await g.CalendarApi(clientViaApiKey(googleApiKey));
 
-    for (Map vEvent
-        in iCalendar.data.where((data) => data["type"] == "VEVENT")) {
-      List<Event> _eventsFromEntry = [];
-
-      RecurrenceRule? rrule = (vEvent['rrule'] != null)
-          ? RecurrenceRule.fromString('RRULE:${vEvent['rrule']}')
-          : null;
-
-      String uid = vEvent["uid"];
-      DateTime start =
-          DateTime.parse((vEvent["dtstart"] as IcsDateTime).dt).toLocal();
-      DateTime end =
-          DateTime.parse((vEvent["dtend"] as IcsDateTime).dt).toLocal();
-      String summary = vEvent["summary"];
-      String description = vEvent["description"] ?? "";
-
-      if (eventSelectedForRecordMatcher.hasMatch(summary + description)) {
-        //? Add single event when no RRULE is set
-        if (rrule == null) {
-          _eventsFromEntry.add(Event(
-            uid,
-            start,
-            end,
-            summary,
-            description,
-            rruleGenerated: false,
-          ));
-        } else {
-          Duration duration = end.difference(start);
-
-          //? Make events based on RRULE
-          for (DateTime generatedStart in rrule
-              .getAllInstances(
-                start: start.toUtc(),
-                before: DateTime.now().add(Duration(days: 90)).toUtc(),
-              )
-              .map((e) => e.toLocal())
-              .toList()) {
-            DateTime generatedEnd = generatedStart.add(duration);
-            try {
-              if ((vEvent["exdate"] as List<IcsDateTime?>?)?.any((element) =>
-                      element?.toDateTime()?.isAtSameMomentAs(generatedStart) ??
-                      false) ??
-                  false)
-                continue; //If excluded date list is null, don't exclude event. If excluded date parse fails, don't exclude event.
-            } catch (e, s) {
-              logger.log(
-                  "WARNING: Error while parsing excluded date list for event. Skipping.\n$e\n$s");
-              continue;
-            }
-            _eventsFromEntry.add(Event(
-              uid,
-              generatedStart,
-              generatedEnd,
-              summary,
-              description,
-              rruleGenerated: true,
-            ));
-          }
+    for (g.Event gEvent in (await calendar.events.list(
+      googleCalendarId,
+      singleEvents: true, // THANK YOU GOOGLE 💖
+      timeMin: DateTime.now().subtract(Duration(days: 1)).toUtc(),
+      maxResults: 100,
+      orderBy: "startTime",
+      timeZone: "Europe/Budapest",
+    ))
+        .items!) {
+      try {
+        var event = Event(
+          gEvent.iCalUID!,
+          gEvent.start!.dateTime!.toLocal(),
+          gEvent.end!.dateTime!.toLocal(),
+          gEvent.summary!,
+          gEvent.description ?? "",
+        );
+        if (eventSelectedForRecordMatcher
+            .hasMatch(event.title + '\n' + event.description)) {
+          _events.add(event);
         }
+      } catch (e) {
+        logger.log("Couldn't parse an event from the calendar, skipping: $e");
+        continue;
       }
-
-      _events.addAll(_eventsFromEntry);
     }
-
-    _events.removeWhere((generatedEvent) => _events
-        .where((allEventsMember) => allEventsMember.rruleGenerated == false)
-        .any((notGeneratedEvent) =>
-            notGeneratedEvent.start.isAtSameMomentAs(generatedEvent.start) &&
-            generatedEvent.rruleGenerated == true));
 
     _events.sort((a, b) => a.title.compareTo(b.title));
     _events.sort((a, b) => a.start.compareTo(b.start));
@@ -127,9 +79,9 @@ Future updateICal() async {
     events.addAll(_events);
 
     logger.log("Got ${events.length} events marked for recording.");
-  } catch (e, stack) {
+  } catch (e, s) {
     logger.log(
-        "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$stack");
+        "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$s");
   }
 
   int updatedNextEventsHash = events

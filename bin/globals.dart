@@ -7,17 +7,13 @@ import 'utils/event.dart';
 import 'utils/history.dart';
 
 //TODO changeme
-final String version = "4.0.3";
+final String version = "4.1.0";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
 final File tracksFile = File(p.join(homeDir.path, 'tracks.yaml'));
 final Directory ffmpegDir = Directory(p.join(homeDir.path, 'ffmpeg'));
-final Directory ffmpegVersionDir = Directory(p.join(
-  ffmpegDir.path,
-  'ffmpeg-5.0.1-essentials_build',
-  'bin',
-));
+late final Directory ffmpegVersionDir;
 final File ffmpegExe = File(p.join(ffmpegVersionDir.path, 'ffmpeg.exe'));
 final Directory recordingsDir = Directory(p.join(homeDir.path, 'recordings'));
 final File historyFile = File(p.join(homeDir.path, 'history.json'));
@@ -28,7 +24,8 @@ int startEarlierByMinutes = 5;
 int endLaterByMinutes = 30;
 int keepRecordings = 0;
 RegExp eventSelectedForRecordMatcher = RegExp(r".");
-Uri iCalUri = Uri();
+String googleCalendarId = "";
+String googleApiKey = "";
 int iCalUpdateFrequencyMinutes = 30;
 
 String? smtpHost;
