@@ -12,6 +12,8 @@ import 'utils/log.dart';
 import 'utils/recording.dart';
 import 'utils/tracks.dart';
 
+import 'package:path/path.dart' as p;
+
 void main() async {
   await setup();
 
@@ -28,7 +30,7 @@ void main() async {
 
   //! iCal update
   Timer.periodic(Duration(minutes: iCalUpdateFrequencyMinutes), (_) async {
-    await updateICal();
+    await updateGoogleCalendar();
     currentStatus.printStatus();
   });
 
@@ -109,13 +111,31 @@ setup() async {
 
     loadConfig();
 
-    if (!ffmpegExe.existsSync()) {
+    try {
+      ffmpegVersionDir = Directory(p.join(
+        ffmpegDir.path,
+        p.basename(ffmpegDir
+            .listSync()
+            .firstWhere((element) => element is Directory)
+            .path),
+        'bin',
+      ));
+    } catch (_) {
       await getRuntime();
+
+      ffmpegVersionDir = Directory(p.join(
+        ffmpegDir.path,
+        p.basename(ffmpegDir
+            .listSync()
+            .firstWhere((element) => element is Directory)
+            .path),
+        'bin',
+      ));
     }
 
     updateDevices();
 
-    await updateICal();
+    await updateGoogleCalendar();
 
     recordingsDir.createSync();
   } catch (e, s) {
