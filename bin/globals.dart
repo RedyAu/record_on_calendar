@@ -7,7 +7,7 @@ import 'calendar/event.dart';
 import 'recording/history.dart';
 
 //TODO changeme
-final String version = "4.1.0";
+final String version = "4.2.0";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
@@ -32,6 +32,8 @@ String? smtpHost;
 int smtpPort = 0;
 String smtpUser = "";
 String smtpPassword = "";
+
+int? webPort;
 
 bool dailyEmail = false;
 List<String> dailyEmailRecipients = [];

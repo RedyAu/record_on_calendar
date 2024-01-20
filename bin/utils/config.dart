@@ -14,9 +14,6 @@ String generateConfigText({
   int? earlier = 5,
   int? later = 30,
   String? regex = ".",
-  String? ftphost,
-  String? username,
-  String? password,
   int keep = 0,
   bool dailyEmail = false,
   String dailyEmailRecipients = '[""]',
@@ -26,6 +23,7 @@ String generateConfigText({
   int? smtpPort,
   String? smtpUser,
   String? smtpPassword,
+  int? webPort = 8080,
   String dailyEmailSenderName = "Record On Calendar",
   String dailyEmailSubject = "Today's recorded events",
   String? dailyEmailContent,
@@ -88,6 +86,9 @@ smtpHost: $smtpHost
 smtpPort: $smtpPort
 smtpUser: $smtpUser
 smtpPassword: $smtpPassword
+
+# Host a web status page on this port (~ to disable)
+webPort: ${webPort ?? '~'}
 
 # Daily email content
 dailyEmailSenderName: $dailyEmailSenderName
@@ -156,6 +157,7 @@ loadConfig() {
         smtpPort: config['smtpPort'],
         smtpUser: config['smtpUser'],
         smtpPassword: config['smtpPassword'],
+        webPort: config['webPort'],
         dailyEmailSenderName: config['dailyEmailSenderName'],
         dailyEmailSubject: config['dailyEmailSubject'],
         dailyEmailContent: "|\n  " +
@@ -192,6 +194,7 @@ loadConfig() {
     smtpPort = config['smtpPort'] ?? 0;
     smtpUser = config['smtpUser'] ?? "";
     smtpPassword = config['smtpPassword'] ?? "";
+    webPort = config['webPort'];
     dailyEmailSenderName = config['dailyEmailSenderName'] ?? "";
     dailyEmailSubject = config['dailyEmailSubject'] ?? "";
     dailyEmailContent = config['dailyEmailContent'] ?? "";

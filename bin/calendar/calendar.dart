@@ -6,6 +6,13 @@ import '../utils/email.dart';
 import 'event.dart';
 import '../utils/log.dart';
 
+List<Event> getNextXEvents(int x) {
+  return events
+      .where((event) => event.startWithOffset.isAfter(DateTime.now()))
+      .take(x)
+      .toList();
+}
+
 Event? getNextEvent({bool today = false}) {
   try {
     if (today) {
@@ -30,6 +37,8 @@ Event? getCurrentEvent() {
     return null;
   }
 }
+
+DateTime? calendarLastUpdated;
 
 Future updateGoogleCalendar() async {
   logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
@@ -79,6 +88,8 @@ Future updateGoogleCalendar() async {
     events.addAll(_events);
 
     logger.log("Got ${events.length} events marked for recording.");
+
+    calendarLastUpdated = DateTime.now();
   } catch (e, s) {
     logger.log(
         "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$s");

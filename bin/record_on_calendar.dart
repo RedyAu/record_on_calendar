@@ -14,6 +14,8 @@ import 'recording/tracks.dart';
 
 import 'package:path/path.dart' as p;
 
+import 'web/server.dart';
+
 void main() async {
   await setup();
 
@@ -110,6 +112,8 @@ setup() async {
     }
 
     loadConfig();
+
+    startServer();
 
     try {
       ffmpegVersionDir = Directory(p.join(
