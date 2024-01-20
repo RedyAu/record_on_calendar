@@ -2,27 +2,31 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 
 import '../globals.dart';
+import '../utils/log.dart';
 import 'page.dart';
 
 void startServer() async {
   if (webPort == null) {
-    print('''
+    logger.log('''
 
 Web port is is not defined, won't start server.
 If you would like to see a web status page, please define a web port in config.yaml
 ''');
     return;
   }
+  try {
+    var handler = const Pipeline().addHandler(_echoRequest);
+    var server = await serve(handler, 'localhost', webPort!);
+    server.autoCompress = true;
 
-  var handler =
-      const Pipeline().addHandler(_echoRequest);
-  var server = await serve(handler, 'localhost', webPort!);
-  server.autoCompress = true;
-
-  print('''
+    logger.log('''
 
 Web status page available at http://${server.address.host}:${server.port}
 ''');
+  } catch (e, s) {
+    logger.log(
+        'Error while starting status page server, continuing...\n$e\n$s', true);
+  }
 }
 
 Response _echoRequest(Request request) => Response.ok(
