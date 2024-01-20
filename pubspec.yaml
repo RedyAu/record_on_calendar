@@ -1,7 +1,7 @@
 name: record_on_calendar
 description: Record multitrack audio automatically according to Google Calendar events.
 # Also change in utils/globals.dart
-version: 4.3.0
+version: 4.3.1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
