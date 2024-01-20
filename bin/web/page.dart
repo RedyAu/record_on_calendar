@@ -42,6 +42,7 @@ String statusPage() {
         <h4 class="card-title">Calendar</h4>
         <button style="position: absolute; top: 10px; right: 10px" type="button" class="btn btn-primary" onclick="window.location.href='/updateCalendar'">Update</button>
         <div><i>Last updated: ${calendarLastUpdated?.toFormattedString() ?? "<b>Couldn't update calendar!</b>"}</i></div>
+        <div>Recording events matching: <code>${eventSelectedForRecordMatcher.pattern}</code></div>
         <h5 class="card-title mt-4 mb-1">Next up today</h5>
       </div>
       <div class="list-group list-group-flush">
@@ -84,7 +85,7 @@ String statusPage() {
         <h4 class="card-title mb-3">Device configurations</h4>
         ${deviceConfigurations.map((devices) => """
         <div class="list-group mb-2">
-            <div class="card-header"><b>${p.basenameWithoutExtension(devices.file.path)}</b> — "${devices.regex}" (${devices.format})</div>
+            <div class="card-header"><b>${p.basenameWithoutExtension(devices.file.path)}</b> — <code>${devices.regex}</code> (${devices.format})</div>
             ${devices.list.map((device) => """
             <div class="list-group-item ${switch (device.state) {
                 DeviceState.firstSeen => 'text-primary',
@@ -92,7 +93,7 @@ String statusPage() {
                 DeviceState.disabled => 'text-secondary',
                 DeviceState.enabledNotPresent => 'text-bg-danger'
               }}">
-              <b>${device.name}</b>${device.customName != null ? ' <i>${device.customName}</i>' : ''} — ${device.state.name}
+              ${device.name} ${device.customName != null ? '<i> (${device.customName})</i>' : ''} — <b>${device.state.name}</b>
             </div>
 """).join()}
       </div>
