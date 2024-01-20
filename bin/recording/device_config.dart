@@ -103,13 +103,13 @@ version: $version # Don't change this!
 
 # FORMAT
 # Specify the format of the output files. You can use any ffmpeg format.
-format: $format
+format: "$format"
 
 # EVENT-SPECIFIC TRACKS
 # Record events that match this regex with the following tracks.
 # You can make multiple track configurations. They will be matched in reverse alphabetical order. The first match will be used.
 # If you want to match all events, use '.' - this is the default. Make sure to name the file with the default regex to be alphabetically first.
-regex: $regex
+regex: "$regex"
 
 # DEVICES - TRACKS
 # These are the audio devices the FFmpeg detected in your computer.
