@@ -79,7 +79,7 @@ void updateDevices() {
     try {
       data = loadYaml(tracksFileContent);
     } catch (e, s) {
-      throw "Couldn't load tracks.yaml! Delete file and re-run the program to generate a new one.\nError: $e\n$s";
+      throw "ERROR: Couldn't load tracks.yaml! Delete file and re-run the program to generate a new one.\nError: $e\n$s";
     }
 
     try {
@@ -87,7 +87,7 @@ void updateDevices() {
         devicesInFile.add(AudioDevice.fromJson(key, value));
       });
     } catch (e, s) {
-      throw "Error while parsing an audio device in tracks.yaml: $e\n$s";
+      throw "ERROR: Couldn't parse an audio device in tracks.yaml: $e\n$s";
     }
   }
 

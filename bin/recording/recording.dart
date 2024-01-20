@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
@@ -24,12 +25,12 @@ deleteFilesOverKeepLimit() async {
         try {
           entity.deleteSync(recursive: true);
         } catch (e, s) {
-          logger.log('      Error while deleting file $entity: $e\n$s');
+          logger.log('      ERROR while deleting file $entity: $e\n$s', true);
         }
       }
     }
   } catch (e, s) {
-    logger.log('      Error while deleting files: $e\n$s');
+    logger.log('      ERROR while deleting files: $e\n$s', true);
   }
   return;
 }
@@ -43,22 +44,31 @@ Future<Process?> startRecordWithName(String recordingTitle) async {
     recordingTitle.getSanitizedForFilename(),
   ));
 
-  if (currentDir.existsSync() &&
-      currentDir.listSync(recursive: true).length > 1) {
+  if (currentDir.existsSync()) {
     logger.log(
-        '  WARNING: Recording already exists. Renaming existing recording.');
+        '  WARNING: Recording already exists. Renaming existing recording.',
+        true);
     try {
       currentDir.renameSync('${currentDir.path}_${DateTime.now().hashCode}');
-    } catch (e, s) {
+    } catch (e) {
       logger.log(
-          '    Rename failed with error. Overwriting existing files instead.\n$e\n$s');
+          '    ERROR: Rename failed: $e\nTrying to kill ffmpeg.\n\n', true);
+      try {
+        var process =
+            await Process.start('taskkill', ['/F', '/IM', 'ffmpeg.exe']);
+        await process.exitCode;
+        return null;
+      } catch (e) {
+        logger.log("    ERROR: Couldn't kill ffmpeg: $e", true);
+      }
     }
   }
   currentDir.createSync(recursive: true);
 
   if (devicesToRecord.isEmpty) {
     logger.log(
-        "  ERROR: No devices available or enabled to record. Couldn't start recording.");
+        "  ERROR: No devices available or enabled to record. Couldn't start recording.",
+        true);
     return null;
   }
 
@@ -79,12 +89,16 @@ Future<Process?> startRecordWithName(String recordingTitle) async {
                 ])
             .reduce((value, element) => value.followedBy(element).toList()),
         workingDirectory: currentDir.path,
-        mode: debug ? ProcessStartMode.inheritStdio : ProcessStartMode.normal);
+        mode: ProcessStartMode.normal);
 
     await Future.delayed(Duration(milliseconds: 300));
+
+    streamToOutput(process.stdout, false);
+    streamToOutput(process.stderr, true);
+
     return process;
   } catch (_) {
-    logger.log("  ERROR: Couldn't start recorder process!");
+    logger.log("  ERROR: Couldn't start recorder process!", true);
     rethrow;
   }
 }

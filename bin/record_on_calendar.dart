@@ -67,8 +67,17 @@ void main() async {
           saveStatusFor(current, EventStatus.started); //At least we tried.
           try {
             process = await startRecordWithName(current.fileName);
-            logger.log("  Started recording process ${process?.pid}.");
-            process?.exitCode.whenComplete(() => process = null);
+            if (process != null) {
+              logger.log("  Started recording process ${process?.pid}.");
+              currentError.clear();
+            } else {
+              logger.log("  Couldn't start recording. Retrying...");
+              saveStatusFor(current, EventStatus.failed);
+            }
+
+            process?.exitCode.whenComplete(() {
+              process = null;
+            });
           } catch (_) {
             saveStatusFor(current, EventStatus.failed);
             rethrow;
@@ -83,7 +92,8 @@ void main() async {
         //? If current hasn't changed, and there is a current recording
         if (process == null) {
           logger.log(
-              '\nERROR: Currently a recording should be running, but no process is active!\nRestarting process...');
+              '\nERROR: Currently a recording should be running, but no process is active!\nRestarting process...',
+              true);
           last = null;
         }
       }
