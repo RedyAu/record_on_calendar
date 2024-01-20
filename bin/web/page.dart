@@ -1,7 +1,11 @@
+import 'package:path/path.dart' as p;
+
 import '../app_status.dart';
 import '../calendar/calendar.dart';
 import '../calendar/event.dart';
 import '../globals.dart';
+import '../recording/device.dart';
+import '../recording/device_config.dart';
 import '../recording/history.dart';
 import '../utils/log.dart';
 
@@ -32,10 +36,11 @@ String statusPage() {
 </div>
 
 <div class="row">
-  <div class="col-lg-6 mb-3">
-    <div class="card">
+  <div class="col-lg-6">
+    <div class="card mb-3">
       <div class="card-body">
         <h4 class="card-title">Calendar</h4>
+        <button style="position: absolute; top: 10px; right: 10px" type="button" class="btn btn-primary" onclick="window.location.href='/updateCalendar'">Update</button>
         <div><i>Last updated: ${calendarLastUpdated?.toFormattedString() ?? "<b>Couldn't update calendar!</b>"}</i></div>
         <h5 class="card-title mt-4 mb-1">Next up today</h5>
       </div>
@@ -62,11 +67,10 @@ String statusPage() {
     </div>
   </div>
 
-  <div class="col col-lg-6 mb-3">
-    <div class="card">
+  <div class="col col-lg-6">
+    <div class="card mb-3">
       <div class="card-body">
-        <h4 class="card-title">History</h4>
-        <h5 class="card-title mt-4 mb-1">Past events today</h5>
+        <h4 class="card-title mb-1">Past events today</h4>
       </div>
       <div class="list-group list-group-flush">
       ${_pastToday.map((event) => (event, getStatusFor(event))).map((record) => """
@@ -74,11 +78,33 @@ String statusPage() {
     """).join()}
       </div>
     </div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <button style="position: absolute; top: 10px; right: 10px" type="button" class="btn btn-primary" onclick="window.location.href='/updateDevices'">Update</button>
+        <h4 class="card-title mb-3">Device configurations</h4>
+        ${deviceConfigurations.map((devices) => """
+        <div class="list-group mb-2">
+            <div class="card-header"><b>${p.basenameWithoutExtension(devices.file.path)}</b> — "${devices.regex}" (${devices.format})</div>
+            ${devices.list.map((device) => """
+            <div class="list-group-item ${switch (device.state) {
+                DeviceState.firstSeen => 'text-primary',
+                DeviceState.enabled => 'text-success',
+                DeviceState.disabled => 'text-secondary',
+                DeviceState.enabledNotPresent => 'text-bg-danger'
+              }}">
+              <b>${device.name}</b>${device.customName != null ? ' <i>${device.customName}</i>' : ''} — ${device.state.name}
+            </div>
+""").join()}
+      </div>
+""").join()}
+      </div>
+    </div>
   </div>
 </div>
+
 <div class="row">
-  <div class="col-lg-6 mb-3">
-    <div class="card">
+  <div class="col-lg-6">
+    <div class="card mb-3">
       <div class="card-body">
         <h4 class="card-title">Log</h4>
         <p>
@@ -91,8 +117,8 @@ ${lastLog.join('<br />').replaceAll('\n', '<br />')}
       </div>
     </div>
   </div>
-  <div class="col-lg-6 mb-3">
-    <div class="card">
+  <div class="col-lg-6">
+    <div class="card mb-3">
       <div class="card-body">
         <h4 class="card-title">FFmpeg</h4>
         <p>

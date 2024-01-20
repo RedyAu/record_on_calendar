@@ -4,11 +4,16 @@ import 'package:archive/archive_io.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart' as p;
 
+import '../calendar/event.dart';
 import '../globals.dart';
 import '../utils/log.dart';
-import 'tracks.dart';
+import 'device_config.dart';
 
 deleteFilesOverKeepLimit() async {
+  logger.log("WARNING: Deleting files over keep limit is not implemented yet.");
+  return;
+  //TODO implement
+  /*
   if (keepRecordings == 0) return;
 
   logger.log("  Deleting files over keep limit...");
@@ -32,15 +37,16 @@ deleteFilesOverKeepLimit() async {
     logger.log('      ERROR while deleting files: $e\n$s', true);
   }
   return;
+  */
 }
 
-Future<Process?> startRecordWithName(String recordingTitle) async {
+Future<Process?> startRecordForEvent(Event event) async {
   deleteFilesOverKeepLimit();
-  updateDevices();
+  DeviceConfiguration devices = getDeviceConfigurationFor(event);
 
   Directory currentDir = Directory(p.join(
     recordingsDir.path,
-    recordingTitle.getSanitizedForFilename(),
+    event.fileName.getSanitizedForFilename(),
   ));
 
   if (currentDir.existsSync()) {
@@ -64,7 +70,7 @@ Future<Process?> startRecordWithName(String recordingTitle) async {
   }
   currentDir.createSync(recursive: true);
 
-  if (devicesToRecord.isEmpty) {
+  if (devices.toRecord.isEmpty) {
     logger.log(
         "  ERROR: No devices available or enabled to record. Couldn't start recording.",
         true);
@@ -74,7 +80,7 @@ Future<Process?> startRecordWithName(String recordingTitle) async {
   try {
     var process = await Process.start(
         ffmpegExe.path,
-        devicesToRecord
+        devices.toRecord
             .asMap()
             .entries
             .map((e) => [
@@ -84,7 +90,7 @@ Future<Process?> startRecordWithName(String recordingTitle) async {
                   'audio=${e.value.id}',
                   '-map',
                   '${e.key}',
-                  '${e.value.fileName}.mp3'
+                  '${e.value.fileName}.${devices.format}'
                 ])
             .reduce((value, element) => value.followedBy(element).toList()),
         workingDirectory: currentDir.path,

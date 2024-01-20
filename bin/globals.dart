@@ -7,11 +7,12 @@ import 'calendar/event.dart';
 import 'recording/history.dart';
 
 //TODO changeme
-final String version = "4.2.0";
+final String version = "4.3.0";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
-final File tracksFile = File(p.join(homeDir.path, 'tracks.yaml'));
+final Directory deviceConfigurationsDir =
+    Directory(p.join(homeDir.path, 'devices'));
 final Directory ffmpegDir = Directory(p.join(homeDir.path, 'ffmpeg'));
 late final Directory ffmpegVersionDir;
 final File ffmpegExe = File(p.join(ffmpegVersionDir.path, 'ffmpeg.exe'));

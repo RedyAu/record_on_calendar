@@ -27,7 +27,7 @@ class Logger {
         File(p.join(logDir.path, DateTime.now().toFormattedString() + '.log'));
   }
 
-  String log(Object? object, [bool error = false]) {
+  String log(Object? object, [bool error = false]) { // TODO make error named parameter
     final String line = '$object'; //only do conversion once
     print(line);
 

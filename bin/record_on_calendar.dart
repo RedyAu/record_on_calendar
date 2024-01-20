@@ -10,7 +10,7 @@ import 'calendar/event.dart';
 import 'recording/history.dart';
 import 'utils/log.dart';
 import 'recording/recording.dart';
-import 'recording/tracks.dart';
+import 'recording/device_config.dart';
 
 import 'package:path/path.dart' as p;
 
@@ -66,7 +66,7 @@ void main() async {
               "\n\n\n============================\n${DateTime.now().toFormattedString()} | >> Starting recording of $current");
           saveStatusFor(current, EventStatus.started); //At least we tried.
           try {
-            process = await startRecordWithName(current.fileName);
+            process = await startRecordForEvent(current);
             if (process != null) {
               logger.log("  Started recording process ${process?.pid}.");
               currentError.clear();
@@ -147,7 +147,7 @@ setup() async {
       ));
     }
 
-    updateDevices();
+    updateDeviceConfigurations();
 
     await updateGoogleCalendar();
 

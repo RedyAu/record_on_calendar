@@ -1,7 +1,9 @@
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 
+import '../calendar/calendar.dart';
 import '../globals.dart';
+import '../recording/device_config.dart';
 import '../utils/log.dart';
 import 'page.dart';
 
@@ -15,7 +17,7 @@ If you would like to see a web status page, please define a web port in config.y
     return;
   }
   try {
-    var handler = const Pipeline().addHandler(_echoRequest);
+    var handler = const Pipeline().addHandler(requestHandler);
     var server = await serve(handler, 'localhost', webPort!);
     server.autoCompress = true;
 
@@ -29,12 +31,25 @@ Web status page available at http://${server.address.host}:${server.port}
   }
 }
 
-Response _echoRequest(Request request) => Response.ok(
-      pageTemplate(statusPage()),
-      headers: {
-        'Content-Type': 'text/html; charset=UTF-8',
-      },
-    );
+DateTime lastUpdate = DateTime.now();
+
+Response requestHandler(Request request) {
+  if (lastUpdate.isBefore(DateTime.now().add(Duration(seconds: 5)))) {
+    if (request.url.path.contains('updateCalendar')) {
+      updateGoogleCalendar();
+      return Response.found('/');
+    } else if (request.url.path.contains('updateDevices')) {
+      updateDeviceConfigurations();
+      return Response.found('/');
+    }
+  }
+  return Response.ok(
+    pageTemplate(statusPage()),
+    headers: {
+      'Content-Type': 'text/html; charset=UTF-8',
+    },
+  );
+}
 
 String pageTemplate(String content) => '''
 <!DOCTYPE html>
