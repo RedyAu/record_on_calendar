@@ -28,7 +28,7 @@ class DeviceConfiguration {
   }
 
   void update() {
-    logger.log("Updating $file...");
+    logger.log("\nUpdating $file...");
 
     String tracksFileContent = file.readAsStringSync();
 
@@ -91,7 +91,7 @@ class DeviceConfiguration {
 
     if (toRecord.isEmpty) {
       logger.log(
-          '\nWARNING: You have no present devices enabled in this configuration.');
+          'WARNING: You have no present devices enabled in this configuration.');
     }
   }
 
@@ -152,16 +152,25 @@ void updateDeviceConfigurations() {
     deviceConfigurations.add(devices);
     devices.file.writeAsStringSync(devices.yaml);
   }
+
+  deviceConfigurations.sort(
+      (a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
 }
 
-DeviceConfiguration getDeviceConfigurationFor(Event event) {
+DeviceConfiguration getDeviceConfigurationFor(Event event,
+    {bool update = true}) {
   deviceConfigurations.sort(
       (a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
 
   for (DeviceConfiguration devices in deviceConfigurations) {
-    devices.update();
+    if (update) {
+      devices.update();
+    }
     if (RegExp(devices.regex).hasMatch(event.title + event.description)) {
-      logger.log("  Using ${p.basename(devices.file.path)} for ${event.title}");
+      if (update) {
+        logger
+            .log("  Using ${p.basename(devices.file.path)} for ${event.title}");
+      }
       return devices;
     }
   }

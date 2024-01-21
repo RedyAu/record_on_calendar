@@ -33,10 +33,10 @@ Web status page available at http://${server.address.host}:${server.port}
 
 DateTime lastUpdate = DateTime.now();
 
-Response requestHandler(Request request) {
+Future<Response> requestHandler(Request request) async {
   if (lastUpdate.isBefore(DateTime.now().add(Duration(seconds: 5)))) {
     if (request.url.path.contains('updateCalendar')) {
-      updateGoogleCalendar();
+      await updateGoogleCalendar();
       return Response.found('/');
     } else if (request.url.path.contains('updateDevices')) {
       updateDeviceConfigurations();
