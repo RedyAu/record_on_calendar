@@ -1,7 +1,7 @@
 # Record On Calendar
 
 An overcomplicated, but pretty smart program to record multitrack audio automatically according to Google Calendar events.
-Fully configurable. (Currently only supports 128 kbps mp3 recording, this can be easily expanded if needed - drop an issue)
+Fully configurable.
 
 _Using FFMPEG / DirectShow (downloads runtime automatically)._
 
