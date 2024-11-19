@@ -3,6 +3,9 @@
 An overcomplicated, but pretty smart program to record multitrack audio automatically according to Google Calendar events.
 Fully configurable.
 
+Could be made generally usable with minimal effort - please drop an issue if you would like to use this!
+In its current state, this code is meant for personal use only.
+
 _Using FFMPEG / DirectShow (downloads runtime automatically)._
 
 ### Example config:
