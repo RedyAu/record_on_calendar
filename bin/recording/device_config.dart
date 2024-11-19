@@ -20,8 +20,7 @@ class DeviceConfiguration {
   DeviceConfiguration(this.file, this.regex, this.format);
   List<Device> list = [];
 
-  List<Device> get toRecord =>
-      list.where((element) => element.state == DeviceState.enabled).toList();
+  List<Device> get toRecord => list.where((element) => element.state == DeviceState.enabled).toList();
 
   factory DeviceConfiguration.fromFile(File file) {
     return DeviceConfiguration(file, "", "")..update();
@@ -56,8 +55,7 @@ class DeviceConfiguration {
 
     List<Device> devicesPresent = getPresentDevices();
     devicesInFile.forEach((element) {
-      if (element.state == DeviceState.enabled &&
-          !devicesPresent.contains(element)) {
+      if (element.state == DeviceState.enabled && !devicesPresent.contains(element)) {
         element.state = DeviceState.enabledNotPresent;
       }
     });
@@ -66,9 +64,8 @@ class DeviceConfiguration {
 
     list.clear();
     for (Device device in allDevices) {
-      Device? alreadyInList = list
-          .cast<Device?>()
-          .firstWhere((element) => element == device, orElse: () => null);
+      Device? alreadyInList =
+          list.cast<Device?>().firstWhere((element) => element == device, orElse: () => null);
       if (alreadyInList == null) {
         list.add(device);
       } else {
@@ -90,8 +87,7 @@ class DeviceConfiguration {
   New devices you should configure: ${list.where((element) => element.state == DeviceState.firstSeen).toList()}""");
 
     if (toRecord.isEmpty) {
-      logger.log(
-          'WARNING: You have no present devices enabled in this configuration.');
+      logger.log('WARNING: You have no present devices enabled in this configuration.');
     }
   }
 
@@ -135,13 +131,10 @@ void updateDeviceConfigurations() {
       .toList();
 
   if (files.isEmpty) {
-    logger.log(
-        "No device configurations found. Creating default configuration...");
-    File defaultConfig =
-        File(p.join(deviceConfigurationsDir.path, '00-default.yaml'));
+    logger.log("No device configurations found. Creating default configuration...");
+    File defaultConfig = File(p.join(deviceConfigurationsDir.path, '00-default.yaml'));
     defaultConfig.createSync(recursive: true);
-    defaultConfig
-        .writeAsStringSync(DeviceConfiguration(defaultConfig, '.', 'mp3').yaml);
+    defaultConfig.writeAsStringSync(DeviceConfiguration(defaultConfig, '.', 'mp3').yaml);
     files.add(defaultConfig);
   }
 
@@ -153,14 +146,11 @@ void updateDeviceConfigurations() {
     devices.file.writeAsStringSync(devices.yaml);
   }
 
-  deviceConfigurations.sort(
-      (a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
+  deviceConfigurations.sort((a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
 }
 
-DeviceConfiguration getDeviceConfigurationFor(Event event,
-    {bool update = true}) {
-  deviceConfigurations.sort(
-      (a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
+DeviceConfiguration getDeviceConfigurationFor(Event event, {bool update = true}) {
+  deviceConfigurations.sort((a, b) => p.basename(b.file.path).compareTo(p.basename(a.file.path)));
 
   for (DeviceConfiguration devices in deviceConfigurations) {
     if (update) {
@@ -168,8 +158,7 @@ DeviceConfiguration getDeviceConfigurationFor(Event event,
     }
     if (RegExp(devices.regex).hasMatch(event.title + event.description)) {
       if (update) {
-        logger
-            .log("  Using ${p.basename(devices.file.path)} for ${event.title}");
+        logger.log("  Using ${p.basename(devices.file.path)} for ${event.title}");
       }
       return devices;
     }
@@ -179,8 +168,8 @@ DeviceConfiguration getDeviceConfigurationFor(Event event,
 }
 
 List<Device> getPresentDevices() {
-  String ffpmegOutput = Process.runSync(ffmpegExe.path,
-          ['-list_devices', 'true', '-f', 'dshow', '-i', 'dummy'],
+  String ffpmegOutput = Process.runSync(
+          ffmpegExe.path, ['-list_devices', 'true', '-f', 'dshow', '-i', 'dummy'],
           stderrEncoding: Encoding.getByName('utf-8'))
       .stderr;
 
@@ -192,10 +181,8 @@ List<Device> getPresentDevices() {
       .map((e) => e.replaceAll(RegExp(r"\[dshow @.*\] "), ""))
       .toList();
 
-  List<int> deviceLines = allLines
-      .where((e) => RegExp(r"\(audio").hasMatch(e))
-      .map((e) => allLines.indexOf(e))
-      .toList();
+  List<int> deviceLines =
+      allLines.where((e) => RegExp(r"\(audio").hasMatch(e)).map((e) => allLines.indexOf(e)).toList();
 
   List<Device> _inputs = [];
 

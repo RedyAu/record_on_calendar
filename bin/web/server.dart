@@ -26,8 +26,7 @@ If you would like to see a web status page, please define a web port in config.y
 Web status page available at http://${server.address.host}:${server.port}
 ''');
   } catch (e, s) {
-    logger.log(
-        'Error while starting status page server, continuing...\n$e\n$s', true);
+    logger.log('Error while starting status page server, continuing...\n$e\n$s', true);
   }
 }
 

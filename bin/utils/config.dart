@@ -136,8 +136,8 @@ loadConfig() {
 
   //! Migrate
   if (config['version'] != version) {
-    configFile.copySync(withoutExtension(configFile.path) +
-        ".${DateTime.now().toFormattedString()}.yaml.old");
+    configFile
+        .copySync(withoutExtension(configFile.path) + ".${DateTime.now().toFormattedString()}.yaml.old");
 
     configFile.writeAsStringSync(
       generateConfigText(
@@ -160,12 +160,10 @@ loadConfig() {
         webPort: config['webPort'],
         dailyEmailSenderName: config['dailyEmailSenderName'],
         dailyEmailSubject: config['dailyEmailSubject'],
-        dailyEmailContent: "|\n  " +
-            (config['dailyEmailContent'] as String).replaceAll("\n", "\n  "),
+        dailyEmailContent: "|\n  " + (config['dailyEmailContent'] as String).replaceAll("\n", "\n  "),
         calendarEmailSenderName: config['calendarEmailSenderName'],
         calendarEmailSubject: config['calendarEmailSubject'],
-        calendarEmailContent: "|\n  " +
-            (config['calendarEmailContent'] as String).replaceAll("\n", "\n  "),
+        calendarEmailContent: "|\n  " + (config['calendarEmailContent'] as String).replaceAll("\n", "\n  "),
       ),
     );
     logger.log(
@@ -185,11 +183,9 @@ loadConfig() {
     eventSelectedForRecordMatcher = RegExp(config['regex']!);
     keepRecordings = config['keep'];
     dailyEmail = config['dailyEmail'] ?? false;
-    dailyEmailRecipients =
-        config['dailyEmailRecipients'].whereType<String>().toList();
+    dailyEmailRecipients = config['dailyEmailRecipients'].whereType<String>().toList();
     calendarEmail = config['calendarEmail'] ?? false;
-    calendarEmailRecipients =
-        config['calendarEmailRecipients'].whereType<String>().toList();
+    calendarEmailRecipients = config['calendarEmailRecipients'].whereType<String>().toList();
     smtpHost = config['smtpHost'];
     smtpPort = config['smtpPort'] ?? 0;
     smtpUser = config['smtpUser'] ?? "";

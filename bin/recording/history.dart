@@ -36,8 +36,7 @@ class HistoryData {
 }
 
 Map<String, dynamic> history() => historyDataInstance.getData();
-void replaceHistoryWith(Map<String, dynamic> data) =>
-    historyDataInstance.saveData(data);
+void replaceHistoryWith(Map<String, dynamic> data) => historyDataInstance.saveData(data);
 
 EventStatus getStatusFor(Event event) {
   return EventStatus.values.byName(
@@ -47,7 +46,6 @@ EventStatus getStatusFor(Event event) {
 
 void saveStatusFor(Event event, EventStatus status) {
   var _history = history();
-  _history.update('${event.hashCode}', (_) => status.name,
-      ifAbsent: () => status.name);
+  _history.update('${event.hashCode}', (_) => status.name, ifAbsent: () => status.name);
   replaceHistoryWith(_history);
 }

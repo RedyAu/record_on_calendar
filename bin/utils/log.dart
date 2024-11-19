@@ -23,11 +23,11 @@ class Logger {
   late File logFile;
 
   Logger() {
-    logFile =
-        File(p.join(logDir.path, DateTime.now().toFormattedString() + '.log'));
+    logFile = File(p.join(logDir.path, DateTime.now().toFormattedString() + '.log'));
   }
 
-  String log(Object? object, [bool error = false]) { // TODO make error named parameter
+  String log(Object? object, [bool error = false]) {
+    // TODO make error named parameter
     final String line = '$object'; //only do conversion once
     print(line);
 

@@ -7,12 +7,11 @@ import 'calendar/event.dart';
 import 'recording/history.dart';
 
 //TODO changeme
-final String version = "4.3.1";
+final String version = "4.3.2";
 
 final Directory homeDir = Directory('RecordOnCalendar');
 final File configFile = File(p.join(homeDir.path, 'config.yaml'));
-final Directory deviceConfigurationsDir =
-    Directory(p.join(homeDir.path, 'devices'));
+final Directory deviceConfigurationsDir = Directory(p.join(homeDir.path, 'devices'));
 final Directory ffmpegDir = Directory(p.join(homeDir.path, 'ffmpeg'));
 late final Directory ffmpegVersionDir;
 final File ffmpegExe = File(p.join(ffmpegVersionDir.path, 'ffmpeg.exe'));
@@ -84,11 +83,7 @@ extension EntityWithModifiedDate on FileSystemEntity {
       }
     } else if (this is Directory) {
       try {
-        return (this as Directory)
-            .listSync()
-            .whereType<File>()
-            .first
-            .lastModifiedSync();
+        return (this as Directory).listSync().whereType<File>().first.lastModifiedSync();
       } catch (e) {
         return DateTime.fromMillisecondsSinceEpoch(0);
       }
@@ -99,6 +94,5 @@ extension EntityWithModifiedDate on FileSystemEntity {
 }
 
 extension SanitizeForFilename on String {
-  String getSanitizedForFilename() =>
-      this.replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
+  String getSanitizedForFilename() => this.replaceAll(RegExp(r'[<>:"/\\|?*]'), "_");
 }

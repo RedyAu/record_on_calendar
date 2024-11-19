@@ -100,8 +100,7 @@ void main() async {
 
       await Future.delayed(Duration(seconds: 3));
     } catch (e, s) {
-      logger.log(
-          'An exception occured in the main loop, waiting 5 seconds.\n$e\n$s');
+      logger.log('An exception occured in the main loop, waiting 5 seconds.\n$e\n$s');
       await Future.delayed(Duration(seconds: 5));
     }
   }
@@ -109,12 +108,11 @@ void main() async {
 
 setup() async {
   try {
-    logger.log(
-        '${DateTime.now().toFormattedString()} | Record on Calendar version $version by Benedek Fodor');
+    logger
+        .log('${DateTime.now().toFormattedString()} | Record on Calendar version $version by Benedek Fodor');
     if (!homeDir.existsSync() || !configFile.existsSync()) {
       configFile.createSync(recursive: true);
-      logger.log(
-          'Created directory with configuration file. Please edit and run again.');
+      logger.log('Created directory with configuration file. Please edit and run again.');
       configFile.writeAsStringSync(generateConfigText());
 
       stdin.readLineSync();
@@ -128,10 +126,7 @@ setup() async {
     try {
       ffmpegVersionDir = Directory(p.join(
         ffmpegDir.path,
-        p.basename(ffmpegDir
-            .listSync()
-            .firstWhere((element) => element is Directory)
-            .path),
+        p.basename(ffmpegDir.listSync().firstWhere((element) => element is Directory).path),
         'bin',
       ));
     } catch (_) {
@@ -139,10 +134,7 @@ setup() async {
 
       ffmpegVersionDir = Directory(p.join(
         ffmpegDir.path,
-        p.basename(ffmpegDir
-            .listSync()
-            .firstWhere((element) => element is Directory)
-            .path),
+        p.basename(ffmpegDir.listSync().firstWhere((element) => element is Directory).path),
         'bin',
       ));
     }

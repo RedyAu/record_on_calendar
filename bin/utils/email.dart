@@ -16,24 +16,22 @@ checkAndSendDailyEmail() async {
   }
   logger.log("Sending daily email.");
 
-  sendEmail(dailyEmailSenderName, dailyEmailRecipients, dailyEmailSubject,
-      renderEmailContent(dailyEmailContent));
+  sendEmail(
+      dailyEmailSenderName, dailyEmailRecipients, dailyEmailSubject, renderEmailContent(dailyEmailContent));
 }
 
 sendCalendarEmail() async {
   if (smtpHost == null || !calendarEmail) {
-    if (debug)
-      logger.log("Email disabled, skipping sending calendar update email.");
+    if (debug) logger.log("Email disabled, skipping sending calendar update email.");
     return;
   }
   logger.log("Sending calendar update email.");
 
-  sendEmail(calendarEmailSenderName, calendarEmailRecipients,
-      calendarEmailSubject, renderEmailContent(calendarEmailContent));
+  sendEmail(calendarEmailSenderName, calendarEmailRecipients, calendarEmailSubject,
+      renderEmailContent(calendarEmailContent));
 }
 
-sendEmail(String senderName, List<String> recipients, String subject,
-    String content) async {
+sendEmail(String senderName, List<String> recipients, String subject, String content) async {
   final smtpServer = SmtpServer(
     smtpHost!,
     port: smtpPort,
@@ -86,22 +84,11 @@ String renderEmailContent(String template) {
             .join("\n")
         : '---',
   );
-  template =
-      template.replaceFirst('[time]', DateTime.now().toFormattedString());
-  template = template.replaceFirst(
-      '[stat - success count]',
-      history()
-          .values
-          .where((element) => element == EventStatus.successful.name)
-          .length
-          .toString());
-  template = template.replaceFirst(
-      '[stat - failed count]',
-      history()
-          .values
-          .where((element) => !(element == EventStatus.successful.name))
-          .length
-          .toString());
+  template = template.replaceFirst('[time]', DateTime.now().toFormattedString());
+  template = template.replaceFirst('[stat - success count]',
+      history().values.where((element) => element == EventStatus.successful.name).length.toString());
+  template = template.replaceFirst('[stat - failed count]',
+      history().values.where((element) => !(element == EventStatus.successful.name)).length.toString());
 
   return template;
 }

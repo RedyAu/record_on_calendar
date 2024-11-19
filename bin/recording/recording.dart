@@ -50,17 +50,13 @@ Future<Process?> startRecordForEvent(Event event) async {
   ));
 
   if (currentDir.existsSync()) {
-    logger.log(
-        '  WARNING: Recording already exists. Renaming existing recording.',
-        true);
+    logger.log('  WARNING: Recording already exists. Renaming existing recording.', true);
     try {
       currentDir.renameSync('${currentDir.path}_${DateTime.now().hashCode}');
     } catch (e) {
-      logger.log(
-          '    ERROR: Rename failed: $e\nTrying to kill ffmpeg.\n\n', true);
+      logger.log('    ERROR: Rename failed: $e\nTrying to kill ffmpeg.\n\n', true);
       try {
-        var process =
-            await Process.start('taskkill', ['/F', '/IM', 'ffmpeg.exe']);
+        var process = await Process.start('taskkill', ['/F', '/IM', 'ffmpeg.exe']);
         await process.exitCode;
         return null;
       } catch (e) {
@@ -71,9 +67,7 @@ Future<Process?> startRecordForEvent(Event event) async {
   currentDir.createSync(recursive: true);
 
   if (devices.toRecord.isEmpty) {
-    logger.log(
-        "  ERROR: No devices available or enabled to record. Couldn't start recording.",
-        true);
+    logger.log("  ERROR: No devices available or enabled to record. Couldn't start recording.", true);
     return null;
   }
 
@@ -111,12 +105,9 @@ Future<Process?> startRecordForEvent(Event event) async {
 Future getRuntime() async {
   if (ffmpegDir.existsSync()) ffmpegDir.deleteSync(recursive: true);
 
-  logger.log(
-      'Downloading and unzipping ffmpeg media library. This will take a while.');
+  logger.log('Downloading and unzipping ffmpeg media library. This will take a while.');
 
-  await get(Uri.parse(
-          "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"))
-      .then((resp) {
+  await get(Uri.parse("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip")).then((resp) {
     File zipFile = File(p.join(ffmpegDir.path, 'ffmpeg.zip'));
     zipFile.createSync(recursive: true);
     zipFile.writeAsBytesSync(resp.bodyBytes);

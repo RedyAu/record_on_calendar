@@ -7,21 +7,16 @@ import 'event.dart';
 import '../utils/log.dart';
 
 List<Event> getNextXEvents(int x) {
-  return events
-      .where((event) => event.startWithOffset.isAfter(DateTime.now()))
-      .take(x)
-      .toList();
+  return events.where((event) => event.startWithOffset.isAfter(DateTime.now())).take(x).toList();
 }
 
 Event? getNextEvent({bool today = false}) {
   try {
     if (today) {
-      return events.firstWhere((event) =>
-          event.startWithOffset.isAfter(DateTime.now()) &&
-          event.start.isSameDate(DateTime.now()));
+      return events.firstWhere(
+          (event) => event.startWithOffset.isAfter(DateTime.now()) && event.start.isSameDate(DateTime.now()));
     } else {
-      return events
-          .firstWhere((event) => event.startWithOffset.isAfter(DateTime.now()));
+      return events.firstWhere((event) => event.startWithOffset.isAfter(DateTime.now()));
     }
   } catch (e) {
     return null;
@@ -31,8 +26,7 @@ Event? getNextEvent({bool today = false}) {
 Event? getCurrentEvent() {
   try {
     return events.lastWhere((element) =>
-        element.startWithOffset.isBefore(DateTime.now()) &&
-        element.endWithOffset.isAfter(DateTime.now()));
+        element.startWithOffset.isBefore(DateTime.now()) && element.endWithOffset.isAfter(DateTime.now()));
   } catch (_) {
     return null;
   }
@@ -43,11 +37,8 @@ DateTime? calendarLastUpdated;
 Future updateGoogleCalendar() async {
   logger.log("\n${DateTime.now().toFormattedString()} | Updating Calendar");
 
-  int nextEventsHash = events
-      .where((element) => element.start.isAfter(DateTime.now()))
-      .take(10)
-      .join()
-      .hashCode;
+  int nextEventsHash =
+      events.where((element) => element.start.isAfter(DateTime.now())).take(10).join().hashCode;
 
   try {
     List<Event> _events = [];
@@ -71,8 +62,7 @@ Future updateGoogleCalendar() async {
           gEvent.summary!,
           gEvent.description ?? "",
         );
-        if (eventSelectedForRecordMatcher
-            .hasMatch(event.title + '\n' + event.description)) {
+        if (eventSelectedForRecordMatcher.hasMatch(event.title + '\n' + event.description)) {
           _events.add(event);
         }
       } catch (e) {
@@ -91,15 +81,12 @@ Future updateGoogleCalendar() async {
 
     calendarLastUpdated = DateTime.now();
   } catch (e, s) {
-    logger.log(
-        "Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$s");
+    logger
+        .log("Exception occured while updating calendar: $e\nContinuing with already downloaded events.\n$s");
   }
 
-  int updatedNextEventsHash = events
-      .where((element) => element.start.isAfter(DateTime.now()))
-      .take(10)
-      .join()
-      .hashCode;
+  int updatedNextEventsHash =
+      events.where((element) => element.start.isAfter(DateTime.now())).take(10).join().hashCode;
 
   if (nextEventsHash != updatedNextEventsHash) {
     sendCalendarEmail();

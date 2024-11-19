@@ -15,17 +15,14 @@ String statusPage() {
   Event? _nextToday = getNextEvent(today: true);
   Event? _next = getNextEvent();
 
-  Iterable<Event> _futureToday = events.where((event) =>
-      event.start.isSameDate(DateTime.now()) &&
-      event.startWithOffset.isAfter(DateTime.now()));
+  Iterable<Event> _futureToday = events.where(
+      (event) => event.start.isSameDate(DateTime.now()) && event.startWithOffset.isAfter(DateTime.now()));
 
-  Iterable<Event> _future = events.where((event) =>
-      !event.start.isSameDate(DateTime.now()) &&
-      event.startWithOffset.isAfter(DateTime.now()));
+  Iterable<Event> _future = events.where(
+      (event) => !event.start.isSameDate(DateTime.now()) && event.startWithOffset.isAfter(DateTime.now()));
 
-  Iterable<Event> _pastToday = events.where((event) =>
-      event.start.isSameDate(DateTime.now()) &&
-      event.endWithOffset.isBefore(DateTime.now()));
+  Iterable<Event> _pastToday = events.where(
+      (event) => event.start.isSameDate(DateTime.now()) && event.endWithOffset.isBefore(DateTime.now()));
 
   return """
 
