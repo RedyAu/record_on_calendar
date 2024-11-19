@@ -69,17 +69,42 @@ String pageTemplate(String content) => '''
     $content
   <div>
   <div class="position-fixed top-0 end-0 p-3" style="z-index: 1030;">
-    <div class="alert alert-secondary">
-      <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+    <div class="alert alert-secondary" id="countdown-alert">
+      <div class="spinner-border spinner-border-sm text-secondary" role="status" id="spinner-icon"></div>
+      <span id="close-icon" style="cursor: pointer;">❌</span>
       <span id="countdown">5</span>
     </div>
   </div>
+  <style>
+    #close-icon {
+      display: none;
+    }
+    #countdown-alert:hover #spinner-icon {
+      display: none;
+    }
+    #countdown-alert:hover #close-icon {
+      display: inline-block;
+    }
+  </style>
   <script>
     var refreshInterval = 4; // Refresh page every 5 seconds
     var countdown = document.getElementById('countdown');
     var remaining = refreshInterval;
+    var refreshDisabled = false;
+
+    countdown.addEventListener('click', function() {
+      refreshDisabled = true;
+      document.getElementById('countdown-alert').style.display = 'none';
+    });
+
+    var countdownAlert = document.getElementById('countdown-alert');
+    countdownAlert.addEventListener('click', function() {
+      refreshDisabled = true;
+      countdownAlert.style.display = 'none';
+    });
 
     function updateCountdownAndRefreshPage() {
+      if (refreshDisabled) return;
       countdown.textContent = remaining.toString();
       remaining--;
 
