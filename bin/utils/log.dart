@@ -57,7 +57,7 @@ void streamToOutput(Stream stream, bool error) async {
       stream.listen((event) {});
     }
   } catch (e, s) {
-    logger.log('Error while streaming output: $e\n$s');
+    // logger.log('Error while streaming output: $e\n$s');
     // reset stream and unsubscribe
   }
 }
