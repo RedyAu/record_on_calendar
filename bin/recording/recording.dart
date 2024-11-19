@@ -49,6 +49,11 @@ Future<Process?> startRecordForEvent(Event event) async {
     event.fileName.getSanitizedForFilename(),
   ));
 
+  if (devices.toRecord.isEmpty) {
+    logger.log("  ERROR: No devices available or enabled to record. Couldn't start recording.", true);
+    return null;
+  }
+
   if (currentDir.existsSync()) {
     logger.log('  WARNING: Recording already exists. Renaming existing recording.', true);
     try {
@@ -65,11 +70,6 @@ Future<Process?> startRecordForEvent(Event event) async {
     }
   }
   currentDir.createSync(recursive: true);
-
-  if (devices.toRecord.isEmpty) {
-    logger.log("  ERROR: No devices available or enabled to record. Couldn't start recording.", true);
-    return null;
-  }
 
   try {
     var process = await Process.start(
