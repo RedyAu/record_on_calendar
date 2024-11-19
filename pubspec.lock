@@ -73,22 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
-  ffmpeg_cli:
-    dependency: "direct main"
-    description:
-      name: ffmpeg_cli
-      sha256: "29f7230be95de4d90833fcddd62c67c73ca4c12bd3ac9fc117658b1a563e765f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   googleapis:
     dependency: "direct main"
     description:
       name: googleapis
-      sha256: "8a8c311723162af077ca73f94b823b97ff68770d966e29614d20baca9fdb490a"
+      sha256: "864f222aed3f2ff00b816c675edf00a39e2aaf373d728d8abec30b37bee1a81c"
       url: "https://pub.dev"
     source: hosted
-    version: "12.0.0"
+    version: "13.2.0"
   googleapis_auth:
     dependency: "direct main"
     description:
@@ -129,14 +121,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  json_annotation:
-    dependency: transitive
-    description:
-      name: json_annotation
-      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.8.1"
   logging:
     dependency: transitive
     description:
@@ -266,4 +250,4 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
+  dart: ">=3.6.0 <4.0.0"
