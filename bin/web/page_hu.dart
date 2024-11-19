@@ -42,7 +42,7 @@ String statusPage() {
           onclick="window.location.href='/updateCalendar'">Frissítés</button>
         <div><i>Utoljára frissítve: ${calendarLastUpdated?.toFormattedString() ?? "<b>Nem sikerült frissíteni a naptárt!</b>"}</i>
         </div>
-        <div>Felvételre kijelölt események: <code>${eventSelectedForRecordMatcher.pattern}</code></div>
+        <div>Felvételre kijelölő RegEx kód: <code>${eventSelectedForRecordMatcher.pattern}</code></div>
         <h5 class="card-title mt-3">Mai elmúlt események</h5>
       </div>
       <div class="list-group list-group-flush">
