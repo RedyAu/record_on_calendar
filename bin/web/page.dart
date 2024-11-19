@@ -29,7 +29,7 @@ String statusPage() {
 <h1 class="mb-5" style="text-align: center">RecordOnCalendar $version</h1>
 <div class="alert ${recording ? (currentError.isNotEmpty ? 'alert-warning' : 'alert-danger') : 'alert-light'}">
   ${recording ? '''
-  <div class="spinner-grow spinner-grow-sm text-danger" role="status"></div> Recording — <b>$_current</b>''' : '💤  ${_next == null ? 'No events marked for recording in the future' : 'Next recording will start:  <i>${_next.startWithOffset.toFormattedString()}</i>'}'}
+  <div class="spinner-grow spinner-grow-sm text-danger" role="status"></div> Recording — <b>$_current</b>''' : '💤  ${_next == null ? 'No events marked for recording in the future' : 'Next event: <b>${_next.title}</b>, recording will start at <i>${_next.startWithOffset.toFormattedString()}</i>'}'}
   ${currentError.isNotEmpty ? '<div><b>${currentError.reversed.take(5).map((e) => e.replaceAll('\n', '<br />')).join('<br />')}</b></div>' : ''}
 </div>
 
@@ -77,6 +77,11 @@ String statusPage() {
         """).join()}
       </div>
       """ : ''}
+      <div class="card-body">
+        <h5 class="card-title mt-1 mb-1">Stats</h5>
+        <div>Successful recordings: ${history().values.where((element) => element == EventStatus.successful.name).length}</div>
+        <div>Failed recordings: ${history().values.where((element) => element == EventStatus.failed.name).length}</div>
+      </div>
     </div>
   </div>
 
