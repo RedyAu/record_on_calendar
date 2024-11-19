@@ -29,7 +29,7 @@ String statusPage() {
 <h1 class="mb-5" style="text-align: center">RecordOnCalendar $version</h1>
 <div class="alert ${recording ? (currentError.isNotEmpty ? 'alert-warning' : 'alert-danger') : 'alert-light'}">
   ${recording ? '''
-  <div class="spinner-grow spinner-grow-sm text-danger" role="status"></div> Recording — <b>$_current</b>''' : '💤  ${_next == null ? 'No events marked for recording in the future' : 'Next event: <b>${_next.title}</b>, recording will start at <i>${_next.startWithOffset.toFormattedString()}</i>'}'}
+  <div class="spinner-grow spinner-grow-sm text-danger" role="status"></div> Felvétel – <b>$_current</b>''' : '💤  ${_next == null ? 'Nincsenek a jövőben rögzítésre jelölt események' : 'Következő esemény: <b>${_next.title}</b>, a felvétel kezdete: <i>${_next.startWithOffset.toFormattedString()}</i>'}'}
   ${currentError.isNotEmpty ? '<div><b>${currentError.reversed.take(5).map((e) => e.replaceAll('\n', '<br />')).join('<br />')}</b></div>' : ''}
 </div>
 
@@ -37,27 +37,27 @@ String statusPage() {
   <div class="col-lg-6">
     <div class="card mb-3">
       <div class="card-body">
-        <h4 class="card-title">Calendar</h4>
+        <h4 class="card-title">Naptár</h4>
         <button style="position: absolute; top: 10px; right: 10px" type="button" class="btn btn-primary"
-          onclick="window.location.href='/updateCalendar'">Update</button>
-        <div><i>Last updated: ${calendarLastUpdated?.toFormattedString() ?? "<b>Couldn't update calendar!</b>"}</i>
+          onclick="window.location.href='/updateCalendar'">Frissítés</button>
+        <div><i>Utoljára frissítve: ${calendarLastUpdated?.toFormattedString() ?? "<b>Nem sikerült frissíteni a naptárt!</b>"}</i>
         </div>
-        <div>Recording events matching: <code>${eventSelectedForRecordMatcher.pattern}</code></div>
-        <h5 class="card-title mt-3">Past events today</h5>
+        <div>Felvételre kijelölt események: <code>${eventSelectedForRecordMatcher.pattern}</code></div>
+        <h5 class="card-title mt-3">Mai elmúlt események</h5>
       </div>
       <div class="list-group list-group-flush">
         ${_pastToday.map((event) => (event, getStatusFor(event))).map((record) => """
         <div class="list-group-item ${record.$2 == EventStatus.successful ? 'text-success' : 'text-bg-danger'}">
           ${record.$1} — <b>${record.$2.name}</b></div>
         """).join()}
-        ${_pastToday.isEmpty ? '<div class="list-group-item"><i>No events</i></div>' : ''}
+        ${_pastToday.isEmpty ? '<div class="list-group-item"><i>Nincs esemény</i></div>' : ''}
       </div>
       <div class="card-body">
-        <h5 class="card-title mt-1">Next up today</h5>
+        <h5 class="card-title mt-1">Mai következő események</h5>
       </div>
       <div class="list-group list-group-flush">
         <div class="card-header">
-          ${_nextToday != null ? '<b>$_nextToday</b><span style="float: right"><i>${p.basenameWithoutExtension(getDeviceConfigurationFor(_nextToday, update: false).file.path)}</i></span>' : '<i>No events</i>'}
+          ${_nextToday != null ? '<b>$_nextToday</b><span style="float: right"><i>${p.basenameWithoutExtension(getDeviceConfigurationFor(_nextToday, update: false).file.path)}</i></span>' : '<i>Nincs esemény</i>'}
         </div>
         ${(_nextToday != null && _futureToday.length > 1) ? """
         ${_futureToday.skip(1).map((event) => """
@@ -69,7 +69,7 @@ String statusPage() {
       </div>
       ${(_future.isNotEmpty) ? """
       <div class="card-body">
-        <h5 class="card-title mt-1 mb-1">Future 10 events</h5>
+        <h5 class="card-title mt-1 mb-1">Következő 10 esemény</h5>
       </div>
       <div class="list-group list-group-flush">
         ${_future.take(10).map((event) => """
@@ -78,9 +78,9 @@ String statusPage() {
       </div>
       """ : ''}
       <div class="card-body">
-        <h5 class="card-title mt-1 mb-1">Stats</h5>
-        <div>Successful recordings: ${history().values.where((element) => element == EventStatus.successful.name).length}</div>
-        <div>Failed recordings: ${history().values.where((element) => element == EventStatus.failed.name).length}</div>
+        <h5 class="card-title mt-1 mb-1">Statisztikák</h5>
+        <div>Sikeres felvételek: ${history().values.where((element) => element == EventStatus.successful.name).length}</div>
+        <div>Sikertelen felvételek: ${history().values.where((element) => element == EventStatus.failed.name).length}</div>
       </div>
     </div>
   </div>
@@ -89,8 +89,8 @@ String statusPage() {
     <div class="card mb-3">
       <div class="card-body">
         <button style="position: absolute; top: 10px; right: 10px" type="button" class="btn btn-primary"
-          onclick="window.location.href='/updateDevices'">Update</button>
-        <h4 class="card-title mb-3">Device configurations</h4>
+          onclick="window.location.href='/updateDevices'">Frissítés</button>
+        <h4 class="card-title mb-3">Eszköz konfigurációk</h4>
         ${deviceConfigurations.map((devices) => """
         <div class="list-group mb-2">
           <div class="list-group-item list-group-item-light"><b>${p.basenameWithoutExtension(devices.file.path)}</b> —
@@ -117,7 +117,7 @@ String statusPage() {
   <div class="col-lg-6">
     <div class="card mb-3">
       <div class="card-body">
-        <h4 class="card-title">Log</h4>
+        <h4 class="card-title">Napló</h4>
         <p>
         <pre style="overflow-y: auto; height: 500px;" id="logPre">
             <code>

@@ -5,7 +5,7 @@ import '../calendar/calendar.dart';
 import '../globals.dart';
 import '../recording/device_config.dart';
 import '../utils/log.dart';
-import 'page.dart';
+import 'page_hu.dart';
 
 void startServer() async {
   if (webPort == null) {
